@@ -7,6 +7,10 @@ const ImageModal_ = async ({ params: { id } }:{
     }
 }) => {
     const post = await req<any>(`/post/${id}`)
-    return <ImageModal post={post} />
+    const tags = post.tags || post.tag_string
+    const category = await req<any>(`/category?tag=${tags}`, {
+        isResultArray: true
+    })
+    return <ImageModal category={category} post={post} />
 }
 export default ImageModal_

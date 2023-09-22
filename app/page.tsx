@@ -13,9 +13,7 @@ const Page = async () => {
 }
 
 const Home = ({data: { posts, tags }}: any) => {
-  return <div style={{
-    display: "flex",
-  }}>
+  return <div style={{}}>
       <BooruImageInfinite init={{
         posts,
         tags

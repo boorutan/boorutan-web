@@ -1,6 +1,9 @@
-export const req = async < T > (url : string, method : "GET" | "POST" | "DELETE" = "GET", body : object | void | null | any = null, option? : {
+export const req = async < T > (url : string, option? : {
+    isResultArray?: boolean,
     isJSON?: boolean,
-    ContentType?: string
+    ContentType?: string,
+    method? : "GET" | "POST" | "DELETE",
+    body? : object | void | null | any,
 }) : Promise < T > => {
     const _res = await fetch(`http://127.0.0.1:8080${url}`, {
         "headers": {
@@ -15,10 +18,11 @@ export const req = async < T > (url : string, method : "GET" | "POST" | "DELETE"
             "Content-type": option ?. ContentType || (option ?. isJSON === false ? "application/json" : "application/json")
         },
         "referrerPolicy": "strict-origin-when-cross-origin",
-        "body": body ? option ?. isJSON === false ? body : JSON.stringify(body) : null,
-        "method": method,
+        "body": option?.body ? option ?. isJSON === false ? option?.body : JSON.stringify(option?.body) : null,
+        "method": option?.method || "GET",
         "credentials": "include",
         "cache": "no-store"
     })
-    return await _res.json()
+    const body = await _res.text()
+    return await JSON.parse(body)
 }

@@ -4,8 +4,9 @@ import { useCallback } from "react"
 import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
 import {getOriginalUrl} from "@/lib/booru";
 
-const ImageModal = ({post}:{
-    post: any
+const ImageModal = ({post, category}:{
+    post: any,
+    category: any,
 }) => {
     const router = useRouter()
     const back = useCallback(() => {
