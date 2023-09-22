@@ -24,12 +24,13 @@ const createDanBooruCategory = (post: any) => {
     )
 }
 
-const ImageModal_ = async ({ params: { id } }:{
+const ImageModal_ = async ({ params: { id, booru } }:{
     params: {
-        id: number
+        id: number,
+        booru: string
     }
 }) => {
-    const post = await req<any>(`/post/${id}`)
+    const post = await req<any>(`/post/${id}?booru=${booru}`)
     const tags = post.tags
     if (tags) {
         const category = await req<any>(`/category?tag=${tags}`, {

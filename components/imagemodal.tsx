@@ -95,7 +95,7 @@ const ImageModal = ({post, category}:{
                     borderRadius: 100,
                     flexWrap: "wrap",
                 }}>
-                    {Object.keys(category).map((c, i) => <SelectorButton color={color[category[c]]} key={i}>{c}</SelectorButton>)}
+                    {Object.keys(category).map((c, [booru]) => <SelectorButton color={color[category[c]]} key={[booru]}>{c}</SelectorButton>)}
                 </div>
             </div>*/}
             <BooruImageFromPost style={{

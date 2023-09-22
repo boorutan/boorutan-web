@@ -22,9 +22,10 @@ const createLines = (posts: Array<any>, line_length: number) => {
     return arr
 }
 
-const ImageLines = ({posts, line_length}:{
+const ImageLines = ({posts, line_length, booru}:{
     posts: Array<any>,
-    line_length: number
+    line_length: number,
+    booru: string
 }) => {
     const [lines, setLines] = useState<Array<Array<any>>>(new Array(line_length).fill(0).map(()=> []))
     const [width, height] = useWindowSize()
@@ -36,7 +37,7 @@ const ImageLines = ({posts, line_length}:{
             <div key={i} style={{ width: `calc(100% / ${Math.round(width / 500) || 3})`, marginBottom: '25px' }}>
                 {arr.map((p: any) => (
                     <div key={p.file_url} style={{ width: "calc(100% - 10px)", marginRight: "5px", marginLeft: "5px", marginBottom: "10px" }}>
-                        <Link scroll={false} href={`/i/${p.id}`}>
+                        <Link scroll={false} href={`/${booru}/${p.id}`}>
                             <BooruImageFromPost style={{
                                 width: "calc(100% - 10px)",
                                 aspectRatio: `${getSize(p)[0]} / ${getSize(p)[1]}`,

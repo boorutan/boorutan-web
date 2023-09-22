@@ -8,12 +8,12 @@ import { getSampleUrl } from '@/lib/booru';
 import useScrollPosition from '@/hook/useScrollPosition';
 import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
+import {useEffectApi} from "@/hook/useApi";
 
 type init = {
     tags: any,
     posts: any
 }
-
 const WarpTop = () => {
     const direction = useScrollDirection()
     const scroll = useScrollPosition()
@@ -74,20 +74,26 @@ const SelectorButton = ({ children, active, onClick }:{
         }}>{ children }</p>
     </div>
 }
-const Selector = ({init}:{
-    init: init
+const Selector = ({init, onChange}:{
+    init: init,
+    onChange?: (tag: string, booru: string) => void
 }) => {
+    const [tag, setTag] = useState("")
+    const [booru, setBooru] = useState("")
     const [tags, setTags] = useState(init.tags)
     const [showMore, setShowMore] = useState(false)
-    const booru = [
+    useEffect(() => {
+        onChange && onChange(tag, booru)
+    }, [tag, booru]);
+    const boorus = [
         {
-            name: "Danbooru",
+            name: "danbooru",
         },
         {
-            name: "Konachan"
+            name: "konachan"
         },
         {
-            name: "Lolibooru"
+            name: "lolibooru"
         }
     ]
     return <div style={{
@@ -106,8 +112,9 @@ const Selector = ({init}:{
             overflowX: "auto",
             maxWidth: "calc(100vw - 32px - 16px)"
         }}>
-            {booru.map((b, i) => <SelectorButton active={!i}>{b.name}</SelectorButton>)}
-            <SelectorButton active>Create</SelectorButton>
+            {boorus.map((b, i) => <SelectorButton onClick={()=> {
+                setBooru(b.name)
+            }} key={i} active={booru==""?!i:booru==b.name}>{b.name}</SelectorButton>)}
         </div>
         <div style={{
             display: "flex",
@@ -121,7 +128,9 @@ const Selector = ({init}:{
             maxWidth: "calc(100vw - 32px - 16px)",
             transition: "all .3s ease"
         }}>
-            {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <SelectorButton active={!i}>{b.name}</SelectorButton>)}
+            {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <SelectorButton onClick={()=> {
+                setTag((name)=> b.name==name?"":b.name)
+            }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
             {!showMore && <SelectorButton onClick={()=> {
                 setShowMore((s)=> !s)
             }} active>Show more</SelectorButton>}
@@ -132,8 +141,11 @@ const Selector = ({init}:{
 const BooruImageInfinite = ({init}: {
     init: init
 }) => {
+    const [tags, setTags] = useState("")
+    const [booru, setBooru] = useState("")
     const [posts, setPosts] = useState<Array<any>>(init.posts)
     const [wait, setWait] = useState<boolean>(false)
+    const [page, setPage] = useState(2)
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
@@ -144,8 +156,9 @@ const BooruImageInfinite = ({init}: {
         pageStart={1}
         hasMore={!wait}
         loadMore={async (id)=> {
-            const posts: Array<any> = await req<any>(`/post?page=${id}`)
+            const posts: Array<any> = await req<any>(`/post?page=${page}&booru=${booru}&tags=${tags}`)
             setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
+            setPage((page: number)=> page + 1)
             setWait(true)
         }}
         initialLoad={false}
@@ -153,10 +166,20 @@ const BooruImageInfinite = ({init}: {
         <div style={{
             padding: 16
         }}>
-            <Selector init={init} />
+            <Selector onChange={async (t, b)=> {
+                if(t==tags&&b==booru) return
+                window.scrollTo({ top: 0 })
+                setTags(t)
+                setBooru(b)
+
+                const p: Array<any> = await req<any>(`/post?page=${1}&booru=${b}&tags=${t}`)
+                setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
+                setWait(true)
+                setPage(2)
+            }} init={init} />
         </div>
         <WarpTop />
-        <ImageLines posts={posts} line_length={3} />
+        <ImageLines booru={booru || "danbooru"} posts={posts} line_length={3} />
     </InfiniteScroll>
 }
 export {
