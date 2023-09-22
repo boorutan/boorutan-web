@@ -5,15 +5,21 @@ export const metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode,
+  modal: React.ReactNode
 }) {
   return (
     <html lang="ja">
       <body style={{
         padding: 0,
         margin: 0,
-      }}>{children}</body>
+        fontFamily: "ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace"
+      }}>
+        {children}
+        {modal}
+      </body>
     </html>
   )
 }

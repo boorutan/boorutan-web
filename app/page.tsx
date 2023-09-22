@@ -5,23 +5,22 @@ import { req } from "@/lib/fetch"
 
 const Page = async () => {
   const posts = await req<any>("/post")
+  const tags = await req<any>("/tag")
   return <Home data={{
-    posts
+    posts,
+    tags
   }} />
 }
 
-const Home = ({data: { posts }}: any) => {
+const Home = ({data: { posts, tags }}: any) => {
   return <div style={{
     display: "flex",
   }}>
-      <BooruImageInfinite init={posts} />
+      <BooruImageInfinite init={{
+        posts,
+        tags
+      }} />
   </div>
-  return <div>
-    <ImageLines posts={posts} line_length={3} />
-  </div>
-  return <div>{posts.map((post: any)=> <div>
-    <BooruImage src={post.preview_url || post.media_asset.variants.filter((p: any)=> p.type == "sample")[0]?.url || post.file_url} />
-  </div>)}</div>
 }
 
 export {
