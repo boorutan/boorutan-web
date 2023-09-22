@@ -16,10 +16,10 @@ const createDanBooruCategoryHelper = (tags: string, type: string) => {
 }
 const createDanBooruCategory = (post: any) => {
     return Object.assign(
-        createDanBooruCategoryHelper(post.tag_string_general, "0"),
         createDanBooruCategoryHelper(post.tag_string_artist, "1"),
-        createDanBooruCategoryHelper(post.tag_string_copyright, "3"),
         createDanBooruCategoryHelper(post.tag_string_character, "4"),
+        createDanBooruCategoryHelper(post.tag_string_copyright, "3"),
+        createDanBooruCategoryHelper(post.tag_string_general, "0"),
         createDanBooruCategoryHelper(post.tag_string_meta, "5"),
     )
 }

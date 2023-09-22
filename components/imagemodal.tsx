@@ -21,6 +21,38 @@ const getDescription = (post: any, category: any) => {
     return getCategoryData(post, category, "3", "Original")
 }
 
+const SelectorButton = ({ children, active, onClick, color }:{
+    children: any,
+    active?: boolean,
+    onClick?: (e: any) => void,
+    color?: string
+}) => {
+    return <div onClick={(e)=> onClick && onClick(e)} style={{
+        padding: "16px 32px",
+        border: "1px solid #eee",
+        width: "fit-content",
+        borderRadius: 100,
+        backgroundColor: color ? color : active ? "#f5f5f5" : "#fff",
+        cursor: "pointer",
+        whiteSpace: "nowrap"
+    }}>
+        <p style={{
+            margin: 0,
+            width: "fit-content",
+            lineHeight: 1
+        }}>{ children }</p>
+    </div>
+}
+
+const color: any = {
+    "0": "#E1F5FE", // general
+    "1": "#FCE4EC", // artist
+    "2": "#ECEFF1", // invalid
+    "3": "#EDE7F6", // copyright
+    "4": "#E8F5E9", // character
+    "5": "#FFF", // meta
+}
+
 const ImageModal = ({post, category}:{
     post: any,
     category: any,
@@ -48,14 +80,31 @@ const ImageModal = ({post, category}:{
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
+            paddingLeft: 16,
+            paddingRight: 16
         }}>
+            <div style={{
+                width: "100%",
+                height: "calc(100% - 32px)",
+            }}>
+                <div style={{
+                    display: "flex",
+                    gap: 12,
+                    padding: 8,
+                    width: "fit-content",
+                    borderRadius: 100,
+                    flexWrap: "wrap",
+                }}>
+                    {Object.keys(category).map((c, i) => <SelectorButton color={color[category[c]]} key={i}>{c}</SelectorButton>)}
+                </div>
+            </div>
             <BooruImageFromPost style={{
                 maxWidth: "80%",
                 height: "calc(100% - 32px)",
                 width: "auto",
                 //boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"
             }} original post={post} />
-            <div style={{
+            {/*<div style={{
                 position: "absolute",
                 bottom: 16,
                 left: 32,
@@ -66,7 +115,7 @@ const ImageModal = ({post, category}:{
                 <p style={{
                     color: "#000"
                 }}>{getDescription(post, category)}</p>
-            </div>
+            </div>*/}
         </div>
     </div>
 }
