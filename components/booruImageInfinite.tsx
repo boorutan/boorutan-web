@@ -84,7 +84,7 @@ const Selector = ({init}:{
             name: "Danbooru",
         },
         {
-            name: "Moebooru"
+            name: "Konachan"
         },
         {
             name: "Lolibooru"

@@ -83,7 +83,7 @@ const ImageModal = ({post, category}:{
             paddingLeft: 16,
             paddingRight: 16
         }}>
-            <div style={{
+            {/*<div style={{
                 width: "100%",
                 height: "calc(100% - 32px)",
             }}>
@@ -97,14 +97,14 @@ const ImageModal = ({post, category}:{
                 }}>
                     {Object.keys(category).map((c, i) => <SelectorButton color={color[category[c]]} key={i}>{c}</SelectorButton>)}
                 </div>
-            </div>
+            </div>*/}
             <BooruImageFromPost style={{
                 maxWidth: "80%",
                 height: "calc(100% - 32px)",
                 width: "auto",
                 //boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"
             }} original post={post} />
-            {/*<div style={{
+            <div style={{
                 position: "absolute",
                 bottom: 16,
                 left: 32,
@@ -115,7 +115,7 @@ const ImageModal = ({post, category}:{
                 <p style={{
                     color: "#000"
                 }}>{getDescription(post, category)}</p>
-            </div>*/}
+            </div>
         </div>
     </div>
 }
