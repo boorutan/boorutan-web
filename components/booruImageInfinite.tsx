@@ -7,6 +7,7 @@ import { req } from '@/lib/fetch';
 import { getSampleUrl } from '@/lib/booru';
 import useScrollPosition from '@/hook/useScrollPosition';
 import useScrollDirection from '@/hook/useScrollDirection';
+import {useRouter} from "next/navigation";
 
 type init = {
     tags: any,

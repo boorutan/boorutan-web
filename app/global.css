@@ -1,0 +1,3 @@
+html > body:has(#modal) {
+    overflow-y: hidden;
+}

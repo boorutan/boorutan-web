@@ -1,10 +1,12 @@
 import ImageModal from "@/components/imagemodal"
+import {req} from "@/lib/fetch";
 
-const ImageModal_ = ({ params: { id } }:{
+const ImageModal_ = async ({ params: { id } }:{
     params: {
         id: number
     }
 }) => {
-    return <ImageModal />
+    const post = await req<any>(`/post/${id}`)
+    return <ImageModal post={post} />
 }
 export default ImageModal_

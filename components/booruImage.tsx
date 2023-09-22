@@ -1,5 +1,5 @@
 "use client"
-import { getExtension, getSampleUrl } from "@/lib/booru"
+import {getExtension, getOriginalUrl, getSampleUrl} from "@/lib/booru"
 import { useState } from "react"
 
 const isVideo = (extension: string) => ["mp4"].includes(extension)
@@ -25,11 +25,47 @@ const BooruImage = ({ src, style }: {
     </>
 }
 
-const BooruImageFromPost = ({ post, style }: {
-    post: any,
+const BooruImageLoad = ({ src, style }: {
+    src: string,
     style?: React.CSSProperties
 }) => {
-    return <BooruImage style={style} src={getSampleUrl(post)}  />
+    const [show, setShow] = useState(true)
+    const [load, setLoad] = useState(false)
+    return <div style={{
+        position: "relative"
+    }}>
+        {show && isImage(getExtension(src)) && <img onLoad={()=> {
+            setLoad(true)
+        }} onError={() => {
+            setShow(false)
+        }} style={Object.assign({
+            objectFit: "cover",
+        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} alt={""} />}
+        {show && isVideo(getExtension(src)) && <video muted loop autoPlay  onLoad={()=> {
+            setLoad(true)
+        }} onError={() => {
+            setShow(false)
+        }} style={Object.assign({
+            objectFit: "cover",
+        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} />}
+        <div style={Object.assign({
+            position: "absolute",
+            top: 0,
+            zIndex: 0,
+            opacity: (!load || !show) ? 1: 0
+        }, style)} />
+    </div>
+}
+
+const BooruImageFromPost = ({ post, style, original, load }: {
+    post: any,
+    original?: boolean,
+    load?: boolean,
+    style?: React.CSSProperties
+}) => {
+    return load ?
+        <BooruImageLoad style={style} src={!original ? getSampleUrl(post) : getOriginalUrl(post)}  /> :
+        <BooruImage     style={style} src={!original ? getSampleUrl(post) : getOriginalUrl(post)}  />
 }
 export {
     BooruImage as default,
