@@ -80,11 +80,19 @@ const Selector = ({init, onChange}:{
 }) => {
     const [tag, setTag] = useState("")
     const [booru, setBooru] = useState("")
-    const [tags, setTags] = useState(init.tags)
+    /*const [tags, setTags] = useState(init.tags.concat([
+        {
+            name: "loli"
+        }
+    ]))*/
+    const [tags, setTags] = useState([
+        { name: "loli" },
+        { name: "hololive" }
+    ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
         onChange && onChange(tag, booru)
-    }, [tag, booru]);
+    }, [tag, booru, onChange]);
     const boorus = [
         {
             name: "danbooru",

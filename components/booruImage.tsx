@@ -1,6 +1,7 @@
 "use client"
 import {getExtension, getOriginalUrl, getSampleUrl} from "@/lib/booru"
 import { useState } from "react"
+import baseurl from "@/lib/url";
 
 const isVideo = (extension: string) => ["mp4"].includes(extension)
 const isImage = (extension: string) => ["jpg", "jpeg", "png"].includes(extension)
@@ -15,12 +16,12 @@ const BooruImage = ({ src, style }: {
             setShow(false)
         }} style={Object.assign({
             objectFit: "cover",
-        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} alt={""} />}
+        }, style)} src={`${baseurl}/image?url=${src}`} alt={""} />}
         {show && isVideo(getExtension(src)) && <video muted loop autoPlay onError={() => {
             setShow(false)
         }} style={Object.assign({
             objectFit: "cover",
-        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} />}
+        }, style)} src={`${baseurl}/image?url=${src}`} />}
         {!show && <div style={style} />}
     </>
 }
@@ -40,14 +41,14 @@ const BooruImageLoad = ({ src, style }: {
             setShow(false)
         }} style={Object.assign({
             objectFit: "cover",
-        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} alt={""} />}
+        }, style)} src={`${baseurl}/image?url=${src}`} alt={""} />}
         {show && isVideo(getExtension(src)) && <video muted loop autoPlay  onLoad={()=> {
             setLoad(true)
         }} onError={() => {
             setShow(false)
         }} style={Object.assign({
             objectFit: "cover",
-        }, style)} src={`http://127.0.0.1:8080/image?url=${src}`} />}
+        }, style)} src={`${baseurl}/image?url=${src}`} />}
         <div style={Object.assign({
             position: "absolute",
             top: 0,

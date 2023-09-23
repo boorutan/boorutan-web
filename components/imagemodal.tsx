@@ -80,8 +80,6 @@ const ImageModal = ({post, category}:{
             justifyContent: "center",
             alignItems: "center",
             position: "relative",
-            paddingLeft: 16,
-            paddingRight: 16
         }}>
             {/*<div style={{
                 width: "100%",
@@ -99,9 +97,11 @@ const ImageModal = ({post, category}:{
                 </div>
             </div>*/}
             <BooruImageFromPost style={{
-                maxWidth: "80%",
-                height: "calc(100% - 32px)",
+                maxWidth: "calc(100% - 4px)",
+                maxHeight: "calc(100% - 4px)",
                 width: "auto",
+                height: "auto",
+                objectFit: "contain",
                 //boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"
             }} original post={post} />
             <div style={{

@@ -1,3 +1,5 @@
+import baseurl from "@/lib/url";
+
 export const req = async < T > (url : string, option? : {
     isResultArray?: boolean,
     isJSON?: boolean,
@@ -5,7 +7,8 @@ export const req = async < T > (url : string, option? : {
     method? : "GET" | "POST" | "DELETE",
     body? : object | void | null | any,
 }) : Promise < T > => {
-    const _res = await fetch(`http://127.0.0.1:8080${url}`, {
+    console.log(`${baseurl}${url}`)
+    const _res = await fetch(`${baseurl}${url}`, {
         "headers": {
             "accept": "application/json, text/plain, */*",
             "accept-language": "ja,en-US;q=0.9,en;q=0.8,ja-JP;q=0.7",
