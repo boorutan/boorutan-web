@@ -1,11 +1,11 @@
 import BooruImage from "@/components/booruImage"
 import BooruImageInfinite from "@/components/booruImageInfinite"
 import ImageLines from "@/components/imagelines"
-import { req } from "@/lib/fetch"
+import {req, reqSSR} from "@/lib/fetch"
 
 const Page = async () => {
-  const posts = await req<any>("/post")
-  const tags = await req<any>("/tag")
+  const posts = await reqSSR<any>("/post")
+  const tags = await reqSSR <any>("/tag")
   return <Home data={{
     posts,
     tags

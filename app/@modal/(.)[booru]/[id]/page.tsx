@@ -1,5 +1,5 @@
 import ImageModal from "@/components/imagemodal"
-import {req} from "@/lib/fetch";
+import {req, reqSSR} from "@/lib/fetch";
 
 const createMoeBooruCategory = (category: any[]): any => {
     return category.reduce((acc, v)=> {
@@ -30,10 +30,10 @@ const ImageModal_ = async ({ params: { id, booru } }:{
         booru: string
     }
 }) => {
-    const post = await req<any>(`/post/${id}?booru=${booru}`)
+    const post = await reqSSR<any>(`/post/${id}?booru=${booru}`)
     const tags = post.tags
     if (tags) {
-        const category = await req<any>(`/category?tag=${tags}`, {
+        const category = await reqSSR<any>(`/category?tag=${tags}`, {
             isResultArray: true
         })
         return <ImageModal category={createMoeBooruCategory(category)} post={post} />
