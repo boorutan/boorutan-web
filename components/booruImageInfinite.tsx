@@ -95,13 +95,24 @@ const Selector = ({init, onChange}:{
     }, [tag, booru, onChange]);
     const boorus = [
         {
-            name: "danbooru",
+            name: "Danbooru",
+            id: "danbooru",
         },
         {
-            name: "konachan"
+            name: "SafeKonachan",
+            id: "safekonachan"
         },
         {
-            name: "lolibooru"
+            name: "Konachan",
+            id: "konachan",
+        },
+        {
+            name: "Yandere",
+            id: "yandere"
+        },
+        {
+            name: "Lolibooru",
+            id: "lolibooru",
         }
     ]
     return <div style={{
@@ -121,8 +132,8 @@ const Selector = ({init, onChange}:{
             maxWidth: "calc(100vw - 32px - 16px)"
         }}>
             {boorus.map((b, i) => <SelectorButton onClick={()=> {
-                setBooru(b.name)
-            }} key={i} active={booru==""?!i:booru==b.name}>{b.name}</SelectorButton>)}
+                setBooru(b.id)
+            }} key={i} active={booru==""?!i:booru==b.id}>{b.name}</SelectorButton>)}
         </div>
         <div style={{
             display: "flex",
