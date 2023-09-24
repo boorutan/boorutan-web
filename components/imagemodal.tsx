@@ -2,24 +2,7 @@
 import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
-import {getOriginalUrl} from "@/lib/booru";
-
-const getCategoryData = (post: any, category: any, type: string, none: string) => {
-    const character = Object.keys(category).filter((v: any)=> category[v] == type)
-    if(character.length)
-        return character.reduce((acc: string, v: any, i: number)=> {
-            return i ? `${acc},${v}` : v
-        }, "")
-    return none
-}
-
-const getTitle = (post: any, category: any) => {
-    return getCategoryData(post, category, "4", "Original")
-}
-
-const getDescription = (post: any, category: any) => {
-    return getCategoryData(post, category, "3", "Original")
-}
+import {getDescription, getOriginalUrl, getTitle} from "@/lib/booru";
 
 const SelectorButton = ({ children, active, onClick, color }:{
     children: any,
@@ -53,14 +36,15 @@ const color: any = {
     "5": "#FFF", // meta
 }
 
-const ImageModal = ({post, category}:{
+const ImageModal = ({post, category, notModal}:{
     post: any,
     category: any,
+    notModal?: boolean,
 }) => {
     const router = useRouter()
     const back = useCallback(() => {
-        router.back()
-    }, [router])
+        !notModal && router.back()
+    }, [notModal, router])
     console.log(post, category);
     return <div id={"modal"} onClick={back} style={{
         position: "fixed",

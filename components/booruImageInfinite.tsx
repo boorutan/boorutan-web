@@ -9,6 +9,7 @@ import useScrollPosition from '@/hook/useScrollPosition';
 import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
+import {quickSort} from "@/lib/sort";
 
 type init = {
     tags: any,
@@ -74,10 +75,22 @@ const SelectorButton = ({ children, active, onClick }:{
         }}>{ children }</p>
     </div>
 }
+
+type suggest = {
+    category: string,
+    created_at: string,
+    is_locked: boolean,
+    name: string,
+    post_count: string,
+    updated_at: string
+}[]
 const Selector = ({init, onChange}:{
     init: init,
     onChange?: (tag: string, booru: string) => void
 }) => {
+    const [query, setQuery] = useState("")
+    const [suggest, setSuggest] = useState<suggest>([])
+
     const [tag, setTag] = useState("")
     const [booru, setBooru] = useState("")
     /*const [tags, setTags] = useState(init.tags.concat([
@@ -115,6 +128,15 @@ const Selector = ({init, onChange}:{
             id: "lolibooru",
         }
     ]
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(async () => {
+            const res: suggest = await req(`/tag/suggest?q=${query}`)
+            const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
+            setSuggest(sorted)
+            // Send Axios request here
+        }, 500)
+        return () => clearTimeout(delayDebounceFn)
+    }, [query])
     return <div style={{
         gap: 12,
         display: "flex",
@@ -133,7 +155,35 @@ const Selector = ({init, onChange}:{
         }}>
             {boorus.map((b, i) => <SelectorButton onClick={()=> {
                 setBooru(b.id)
+
             }} key={i} active={booru==""?!i:booru==b.id}>{b.name}</SelectorButton>)}
+        </div>
+        <div style={{
+            display: "flex",
+            gap: 12,
+            padding: 8,
+            border: "1px solid #eee ",
+            borderRadius: 100,
+            overflowX: "auto",
+            maxWidth: "calc(100vw - 32px - 16px)",
+            width: "fit-content"
+        }}>
+            <input value={query} onChange={(e)=> {
+                setQuery(e.target.value)
+            }} style={{
+                height: 44,
+                maxWidth: 500,
+                borderRadius: 100,
+                border: "1px solid #f5f5f5",
+                outline: "none",
+                paddingLeft: 16,
+                fontFamily: "ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace",
+                fontSize: "1em",
+                padding: "2px 32px"
+            }} type="text" />
+            {suggest.slice(0, 3).map((b: any, i: any) => <SelectorButton onClick={()=> {
+                setTag((name)=> b.name==name?"":b.name)
+            }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
         </div>
         <div style={{
             display: "flex",
