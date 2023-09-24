@@ -86,8 +86,9 @@ type suggest = {
 }[]
 const Selector = ({init, onChange}:{
     init: init,
-    onChange?: (tag: string, booru: string) => void
+    onChange?: (tag: string, booru: string, like: boolean) => void
 }) => {
+    const [like, setLike] = useState(false)
     const [query, setQuery] = useState("")
     const [suggest, setSuggest] = useState<suggest>([])
 
@@ -104,8 +105,8 @@ const Selector = ({init, onChange}:{
     ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
-        onChange && onChange(tag, booru)
-    }, [tag, booru, onChange]);
+        onChange && onChange(tag, booru, like)
+    }, [tag, booru, onChange, like]);
     const boorus = [
         {
             name: "Danbooru",
@@ -187,22 +188,44 @@ const Selector = ({init, onChange}:{
         </div>
         <div style={{
             display: "flex",
-            flexWrap: showMore ? "wrap" : "nowrap",
-            gap: 12,
-            padding: 8,
-            border: "1px solid #eee ",
-            width: "fit-content",
-            borderRadius: 32,
-            overflowX: "auto",
-            maxWidth: "calc(100vw - 32px - 16px)",
-            transition: "all .3s ease"
+            flexWrap: "wrap",
+            gap: 12
         }}>
-            {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <SelectorButton onClick={()=> {
-                setTag((name)=> b.name==name?"":b.name)
-            }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
-            {!showMore && <SelectorButton onClick={()=> {
-                setShowMore((s)=> !s)
-            }} active>Show more</SelectorButton>}
+            <div style={{
+                display: "flex",
+                flexWrap: showMore ? "wrap" : "nowrap",
+                gap: 12,
+                padding: 8,
+                border: "1px solid #eee ",
+                width: "fit-content",
+                borderRadius: 32,
+                overflowX: "auto",
+                maxWidth: "calc(100vw - 32px - 16px)",
+                transition: "all .3s ease"
+            }}>
+                {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <SelectorButton onClick={()=> {
+                    setTag((name)=> b.name==name?"":b.name)
+                }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
+                {!showMore && <SelectorButton onClick={()=> {
+                    setShowMore((s)=> !s)
+                }} active>Show more</SelectorButton>}
+            </div>
+            <div style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 12,
+                padding: 8,
+                border: "1px solid #eee ",
+                width: "fit-content",
+                borderRadius: 32,
+                overflowX: "auto",
+                maxWidth: "calc(100vw - 32px - 16px)",
+                transition: "all .3s ease"
+            }}>
+                <SelectorButton onClick={()=> {
+                    setLike((l)=> !l)
+                }} active={like}>Liked</SelectorButton>
+            </div>
         </div>
     </div>
 }
@@ -210,6 +233,7 @@ const Selector = ({init, onChange}:{
 const BooruImageInfinite = ({init}: {
     init: init
 }) => {
+    const [like, setLike] = useState(false)
     const [tags, setTags] = useState("")
     const [booru, setBooru] = useState("")
     const [posts, setPosts] = useState<Array<any>>(init.posts)
@@ -225,7 +249,7 @@ const BooruImageInfinite = ({init}: {
         pageStart={1}
         hasMore={!wait}
         loadMore={async (id)=> {
-            const posts: Array<any> = await req<any>(`/post?page=${page}&booru=${booru}&tags=${tags}`)
+            const posts: Array<any> = await req<any>(`${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}`)
             setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
             setPage((page: number)=> page + 1)
             setWait(true)
@@ -235,13 +259,14 @@ const BooruImageInfinite = ({init}: {
         <div style={{
             padding: 16
         }}>
-            <Selector onChange={async (t, b)=> {
-                if(t==tags&&b==booru) return
+            <Selector onChange={async (t, b, l)=> {
+                if(t==tags&&b==booru&&l==like) return
                 window.scrollTo({ top: 0 })
                 setTags(t)
                 setBooru(b)
+                setLike(l)
 
-                const p: Array<any> = await req<any>(`/post?page=${1}&booru=${b}&tags=${t}`)
+                const p: Array<any> = await req<any>(`/${l ? "like" : "post"}?page=${1}&booru=${b}&tags=${t}`)
                 setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
                 setWait(true)
                 setPage(2)
