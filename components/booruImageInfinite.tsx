@@ -249,7 +249,9 @@ const BooruImageInfinite = ({init}: {
         pageStart={1}
         hasMore={!wait}
         loadMore={async (id)=> {
-            const posts: Array<any> = await req<any>(`${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}`)
+            if(like)
+                return setWait(true)
+            const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}`)
             setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
             setPage((page: number)=> page + 1)
             setWait(true)
