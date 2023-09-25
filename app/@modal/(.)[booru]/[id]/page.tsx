@@ -18,9 +18,9 @@ const ImageModal_ = async ({ params: { id, booru } }:{
             isResultArray: true,
             isSSR: true
         })
-        return <ImageModal category={createMoeBooruCategory(category)} post={post} />
+        return <ImageModal booru={booru} category={createMoeBooruCategory(category)} post={post} />
     }
-    return <ImageModal category={createDanBooruCategory(post)} post={post} />
+    return <ImageModal booru={booru} category={createDanBooruCategory(post)} post={post} />
 
 }
 export default ImageModal_

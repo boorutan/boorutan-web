@@ -1,8 +1,9 @@
 "use client"
 import { useRouter } from "next/navigation"
-import { useCallback } from "react"
+import {useCallback, useState} from "react"
 import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
 import {getDescription, getOriginalUrl, getTitle} from "@/lib/booru";
+import {req} from "@/lib/fetch";
 
 const SelectorButton = ({ children, active, onClick, color }:{
     children: any,
@@ -36,11 +37,13 @@ const color: any = {
     "5": "#FFF", // meta
 }
 
-const ImageModal = ({post, category, notModal}:{
+const ImageModal = ({post, category, notModal, booru}:{
     post: any,
     category: any,
+    booru: string,
     notModal?: boolean,
 }) => {
+    const [liked, setLiked] = useState(false)
     const router = useRouter()
     const back = useCallback(() => {
         !notModal && router.back()
@@ -99,6 +102,18 @@ const ImageModal = ({post, category, notModal}:{
                 <p style={{
                     color: "#000"
                 }}>{getDescription(post, category)}</p>
+            </div>
+            <div style={{
+                position: "absolute",
+                bottom: 16,
+                right: 32
+            }}>
+                <p onClick={async ()=> {
+                    const res = await req(`/like/${booru}/${post.id}`, {
+                        method: "POST"
+                    })
+                    setLiked(true)
+                }}>Like</p>
             </div>
         </div>
     </div>

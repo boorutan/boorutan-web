@@ -132,6 +132,8 @@ const Selector = ({init, onChange}:{
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             const res: suggest = await req(`/tag/suggest?q=${query}`)
+            if(!Array.isArray(res))
+                    return
             const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
             setSuggest(sorted)
             // Send Axios request here
@@ -156,7 +158,6 @@ const Selector = ({init, onChange}:{
         }}>
             {boorus.map((b, i) => <SelectorButton onClick={()=> {
                 setBooru(b.id)
-
             }} key={i} active={booru==""?!i:booru==b.id}>{b.name}</SelectorButton>)}
         </div>
         <div style={{
@@ -185,6 +186,9 @@ const Selector = ({init, onChange}:{
             {suggest.slice(0, 3).map((b: any, i: any) => <SelectorButton onClick={()=> {
                 setTag((name)=> b.name==name?"":b.name)
             }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
+            <SelectorButton onClick={()=> {
+                setTag((name)=> name=="" ? query : "")
+            }} active={tag!=""}>{tag || "Search"}</SelectorButton>
         </div>
         <div style={{
             display: "flex",

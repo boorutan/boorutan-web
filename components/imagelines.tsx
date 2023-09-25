@@ -37,7 +37,7 @@ const ImageLines = ({posts, line_length, booru}:{
             <div key={i} style={{ width: `calc(100% / ${Math.round(width / 500) || 3})`, marginBottom: '25px' }}>
                 {arr.map((p: any) => (
                     <div key={p.file_url} style={{ width: "calc(100% - 10px)", marginRight: "5px", marginLeft: "5px", marginBottom: "10px" }}>
-                        <Link scroll={false} href={`/${booru}/${p.id}`}>
+                        <Link scroll={false} href={`/${p.booru_type || booru}/${p.id}`}>
                             <BooruImageFromPost style={{
                                 width: "calc(100% - 10px)",
                                 aspectRatio: `${getSize(p)[0]} / ${getSize(p)[1]}`,
