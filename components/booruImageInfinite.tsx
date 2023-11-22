@@ -86,7 +86,7 @@ type suggest = {
 }[]
 const Selector = ({init, onChange}:{
     init: init,
-    onChange?: (tag: string, booru: string, like: boolean) => void
+    onChange?: (tag: string, booru: string, like: boolean, bypassCache: boolean) => void
 }) => {
     const [like, setLike] = useState(false)
     const [query, setQuery] = useState("")
@@ -94,6 +94,9 @@ const Selector = ({init, onChange}:{
 
     const [tag, setTag] = useState("")
     const [booru, setBooru] = useState("")
+
+    const [bypassCache, setBypassCache] = useState(false)
+
     /*const [tags, setTags] = useState(init.tags.concat([
         {
             name: "loli"
@@ -101,12 +104,13 @@ const Selector = ({init, onChange}:{
     ]))*/
     const [tags, setTags] = useState([
         { name: "loli" },
-        { name: "hololive" }
+        { name: "hololive" },
+        { name: "cirno" }
     ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
-        onChange && onChange(tag, booru, like)
-    }, [tag, booru, onChange, like]);
+        onChange && onChange(tag, booru, like, bypassCache)
+    }, [tag, booru, onChange, like, bypassCache]);
     const boorus = [
         {
             name: "Danbooru",
@@ -231,6 +235,22 @@ const Selector = ({init, onChange}:{
                 }} active={like}>Liked</SelectorButton>
             </div>
         </div>
+        <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 12,
+            padding: 8,
+            border: "1px solid #eee ",
+            width: "fit-content",
+            borderRadius: 32,
+            overflowX: "auto",
+            maxWidth: "calc(100vw - 32px - 16px)",
+            transition: "all .3s ease"
+        }}>
+            <SelectorButton onClick={()=> {
+                setBypassCache((v)=> !v)
+            }} active={bypassCache}>BypassCache</SelectorButton>
+        </div>
     </div>
 }
 
@@ -243,6 +263,7 @@ const BooruImageInfinite = ({init}: {
     const [posts, setPosts] = useState<Array<any>>(init.posts)
     const [wait, setWait] = useState<boolean>(false)
     const [page, setPage] = useState(2)
+    const [bypassCache, setBypassCache] = useState(false)
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
@@ -265,14 +286,15 @@ const BooruImageInfinite = ({init}: {
         <div style={{
             padding: 16
         }}>
-            <Selector onChange={async (t, b, l)=> {
-                if(t==tags&&b==booru&&l==like) return
+            <Selector onChange={async (t, b, l, c)=> {
+                if(t==tags&&b==booru&&l==like&&c==bypassCache) return
                 window.scrollTo({ top: 0 })
                 setTags(t)
                 setBooru(b)
                 setLike(l)
+                setBypassCache(c)
 
-                const p: Array<any> = await req<any>(`/${l ? "like" : "post"}?page=${1}&booru=${b}&tags=${t}`)
+                const p: Array<any> = await req<any>(`/${l ? "like" : "post"}?page=${1}&booru=${b}&tags=${t}${c?"&bypasscache=true":""}`)
                 setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
                 setWait(true)
                 setPage(2)
