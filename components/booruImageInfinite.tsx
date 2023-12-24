@@ -84,6 +84,16 @@ type suggest = {
     post_count: string,
     updated_at: string
 }[]
+
+const color: any = {
+    "0": "#2196F3", // general
+    "1": "#E91E63", // artist
+    "2": "#FFEB3B", // invalid
+    "3": "#9C27B0", // copyright
+    "4": "#4CAF50", // character
+    "5": "#FFEB3B", // meta
+}
+
 const Selector = ({init, onChange}:{
     init: init,
     onChange?: (tag: string, booru: string, like: boolean, bypassCache: boolean) => void
@@ -92,7 +102,11 @@ const Selector = ({init, onChange}:{
     const [query, setQuery] = useState("")
     const [suggest, setSuggest] = useState<suggest>([])
 
-    const [tag, setTag] = useState("")
+    const [tag, setTag] = useState<null | Array<{
+        category: string,
+        name: string,
+        post_count: string
+    }>>(null)
     const [booru, setBooru] = useState("")
 
     const [bypassCache, setBypassCache] = useState(false)
@@ -109,7 +123,7 @@ const Selector = ({init, onChange}:{
     ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
-        onChange && onChange(tag, booru, like, bypassCache)
+        onChange && onChange(tag ? tag.map((v)=> v.name).join(" ") : "", booru, like, bypassCache)
     }, [tag, booru, onChange, like, bypassCache]);
     const boorus = [
         {
@@ -144,6 +158,7 @@ const Selector = ({init, onChange}:{
         }, 500)
         return () => clearTimeout(delayDebounceFn)
     }, [query])
+    console.log(tag)
     return <div style={{
         gap: 12,
         display: "flex",
@@ -187,13 +202,38 @@ const Selector = ({init, onChange}:{
                 fontSize: "1em",
                 padding: "2px 32px"
             }} type="text" />
-            {suggest.slice(0, 3).map((b: any, i: any) => <SelectorButton onClick={()=> {
-                setTag((name)=> b.name==name?"":b.name)
-            }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
-            <SelectorButton onClick={()=> {
-                setTag((name)=> name=="" ? query : "")
-            }} active={tag!=""}>{tag || "Search"}</SelectorButton>
+            {quickSort(suggest, (a, b)=> Number.parseInt(a.post_count) > Number.parseInt((b.post_count))).slice(0, 3).map((b: any, i: any) => <SelectorButton onClick={()=> {
+                setTag((tag)=> {
+                    if(!tag) return [b]
+                    if(tag.map((v)=> v.name).includes(b.name)) {
+                        return tag.filter((v)=> v.name != b.name)
+                    }
+                    return [b].concat(tag)
+                })
+                //setTag((name)=> b.name==name?"":b.name)
+            }} key={i} active={tag?.map((v)=> v.name).includes(b.name)}><span style={{color: color[b.category]}}>{b.name}</span> {b.post_count}</SelectorButton>)}
+            {/*<SelectorButton onClick={()=> {
+                //setTag((name)=> name=="" ? query : "")
+            }} active={false}>search</SelectorButton>*/}
         </div>
+        {(tag && !!tag.length) && <div style={{
+            display: "flex",
+            gap: 12,
+            padding: 8,
+            border: "1px solid #eee ",
+            borderRadius: 100,
+            overflowX: "auto",
+            maxWidth: "calc(100vw - 32px - 16px)",
+            width: "fit-content"
+        }}>
+            {tag?.map((b, i) => <SelectorButton onClick={()=> {
+                setTag((tag)=> {
+                    if(!tag) return null
+                    return tag.filter((v)=> v.name != b.name)
+                })
+                //setTag((name)=> b.name==name?"":b.name)
+            }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></SelectorButton>)}
+        </div>}
         <div style={{
             display: "flex",
             flexWrap: "wrap",
