@@ -28,13 +28,22 @@ const SelectorButton = ({ children, active, onClick, color }:{
     </div>
 }
 
-const color: any = {
+/*const color: any = {
     "0": "#E1F5FE", // general
     "1": "#FCE4EC", // artist
     "2": "#ECEFF1", // invalid
     "3": "#EDE7F6", // copyright
     "4": "#E8F5E9", // character
     "5": "#FFF", // meta
+}*/
+
+const color: any = {
+    "0": "#2196F3", // general
+    "1": "#E91E63", // artist
+    "2": "#FFEB3B", // invalid
+    "3": "#9C27B0", // copyright
+    "4": "#4CAF50", // character
+    "5": "#FFEB3B", // meta
 }
 
 const ImageModal = ({post, category, notModal, booru}:{
@@ -68,9 +77,10 @@ const ImageModal = ({post, category, notModal, booru}:{
             alignItems: "center",
             position: "relative",
         }}>
-            {/*<div style={{
+            <div style={{
                 width: "100%",
                 height: "calc(100% - 32px)",
+                position: "absolute"
             }}>
                 <div style={{
                     display: "flex",
@@ -80,9 +90,9 @@ const ImageModal = ({post, category, notModal, booru}:{
                     borderRadius: 100,
                     flexWrap: "wrap",
                 }}>
-                    {Object.keys(category).map((c, [booru]) => <SelectorButton color={color[category[c]]} key={[booru]}>{c}</SelectorButton>)}
+                    {Object.keys(category).map((c, i) => <p style={{color: color[category[c]], margin: 0}} key={i}>{c}</p>)}
                 </div>
-            </div>*/}
+            </div>
             <BooruImageFromPost style={{
                 maxWidth: "calc(100% - 4px)",
                 maxHeight: "calc(100% - 4px)",
