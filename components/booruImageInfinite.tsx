@@ -212,9 +212,21 @@ const Selector = ({init, onChange}:{
                 })
                 //setTag((name)=> b.name==name?"":b.name)
             }} key={i} active={tag?.map((v)=> v.name).includes(b.name)}><span style={{color: color[b.category]}}>{b.name}</span> {b.post_count}</SelectorButton>)}
-            {/*<SelectorButton onClick={()=> {
+            <SelectorButton onClick={()=> {
+                setTag((tag)=> {
+                    const t = {
+                        name: query,
+                        category: "5",
+                        post_count: "0"
+                    }
+                    if(!tag) return [t]
+                    if(tag.map((v)=> v.name).includes(t.name)) {
+                        return tag.filter((v)=> v.name != t.name)
+                    }
+                    return [t].concat(tag)
+                })
                 //setTag((name)=> name=="" ? query : "")
-            }} active={false}>search</SelectorButton>*/}
+            }} active={tag?.map((v)=> v.name).includes(query)}>{query}</SelectorButton>
         </div>
         {(tag && !!tag.length) && <div style={{
             display: "flex",
