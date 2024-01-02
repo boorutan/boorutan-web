@@ -6,11 +6,28 @@ type Pixel = {
     B: Number
 }
 
-export const SimpleImageMock = ({details = 5, src, pixels}: {
+export const SimpleImageMock = ({details = 10, src, pixels, style}: {
     details?: number,
     src: string,
-    pixels: Pixel[]
+    pixels: Pixel[],
+    style?: React.CSSProperties
 }) => {
+    return <div style={{
+        marginLeft: 4,
+        overflow: "hidden",
+        position: "relative"
+    }}>
+        <img src={src} style={Object.assign({
+            objectFit: "cover",
+            zIndex: 2,
+            position: "relative"
+        }, style)} />
+        <ImageMock size={280} colors={pixels} x={details} y={details} style={{
+            width: "100%",
+            height: "100%",
+        }}/>
+    </div>
+
     if(!pixels)
         return <div style={{
             position: "absolute"
@@ -22,16 +39,20 @@ export const SimpleImageMock = ({details = 5, src, pixels}: {
             }} />
         </div>
     return <div style={{
-        position: "relative"
+        position: "relative",
+        width: "100%" ,
+        height: "fit-content",
+        overflow: "hidden",
+        aspectRatio: "2 / 1"
     }}>
         <img src={src} style={{
-            position: "absolute",
+            position: "relative",
             width: "100%",
-            zIndex: 2
+            zIndex: 2,
         }} />
         <ImageMock size={280} colors={pixels} x={details} y={details} style={{
             width: "100%",
-            aspectRatio: "1 / 1"
+            height: "100%",
         }}/>
     </div>
 }
@@ -44,7 +65,6 @@ export const ImageMock = ({colors, x, y, size = 120, style}:{
     style?: CSSProperties
 }) => {
     return <div style={Object.assign({
-        position: "relative",
         backgroundColor: "#fff",
         overflow: "hidden"
     }, style)}>
