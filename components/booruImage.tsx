@@ -2,21 +2,25 @@
 import {getExtension, getOriginalUrl, getSampleUrl} from "@/lib/booru"
 import { useState } from "react"
 import baseurl from "@/lib/url";
+import {SimpleImageMock} from "@/components/imagemock";
 
 const isVideo = (extension: string) => ["mp4"].includes(extension)
 const isImage = (extension: string) => ["jpg", "jpeg", "png"].includes(extension)
 
-const BooruImage = ({ src, style }: {
+const BooruImage = ({ src, style, post, mock = false }: {
     src: string,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
+    post: any,
+    mock?: boolean
 }) => {
     const [show, setShow] = useState(true)
     return <>
-        {show && isImage(getExtension(src)) && <img onError={() => {
+        {!mock && show && isImage(getExtension(src)) && <img onError={() => {
             setShow(false)
         }} style={Object.assign({
             objectFit: "cover",
         }, style)} src={`${baseurl}/image?url=${src}`} alt={""} />}
+        {mock && show && isImage(getExtension(src)) && <SimpleImageMock style={style} src={`${baseurl}/image?url=${src}`} pixels={post.summary} />}
         {show && isVideo(getExtension(src)) && <video muted loop autoPlay onError={() => {
             setShow(false)
         }} style={Object.assign({
@@ -58,15 +62,16 @@ const BooruImageLoad = ({ src, style }: {
     </div>
 }
 
-const BooruImageFromPost = ({ post, style, original, load }: {
+const BooruImageFromPost = ({ post, style, original, load, mock = false }: {
     post: any,
     original?: boolean,
     load?: boolean,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
+    mock?: boolean
 }) => {
     return load ?
         <BooruImageLoad style={style} src={!original ? getSampleUrl(post) : getOriginalUrl(post)}  /> :
-        <BooruImage     style={style} src={!original ? getSampleUrl(post) : getOriginalUrl(post)}  />
+        <BooruImage mock={mock}     style={style} src={!original ? getSampleUrl(post) : getOriginalUrl(post)} post={post}  />
 }
 export {
     BooruImage as default,
