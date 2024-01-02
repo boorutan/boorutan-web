@@ -93,7 +93,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     {Object.keys(category).map((c, i) => <p style={{color: color[category[c]], margin: 0}} key={i}>{c}</p>)}
                 </div>
             </div>
-            <BooruImageFromPost style={{
+            <BooruImageFromPost  mock style={{
                 maxWidth: "calc(100% - 4px)",
                 maxHeight: "calc(100% - 4px)",
                 width: "auto",
