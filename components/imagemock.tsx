@@ -1,4 +1,6 @@
-import {CSSProperties, useEffect, useState} from "react";
+import {CSSProperties, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {mergeObject} from "@/lib/utils/object";
+import {useRerender} from "@/hook/useRerender";
 
 type Pixel = {
     R: Number,
@@ -12,21 +14,49 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
     pixels: Pixel[],
     style?: React.CSSProperties
 }) => {
-    return <div style={{
-        marginLeft: 4,
-        overflow: "hidden",
-        position: "relative"
-    }}>
-        <img src={src} style={Object.assign({
+    const [width, setWidth] = useState(0)
+    const [height, setHeight] = useState(0)
+    const [u, update ] = useRerender()
+    const ref = useRef<any>(null)
+    useLayoutEffect(() => {
+        setWidth(ref.current?.clientWidth || 0)
+        setHeight(ref.current?.clientHeight || 0)
+    }, []);
+    useEffect(() => {
+        const refresh = setTimeout(()=> {
+            setWidth(ref.current?.clientWidth || 0)
+            setHeight(ref.current?.clientHeight || 0)
+            update()
+            console.log("hello")
+        }, 100)
+        return ()=> clearInterval(refresh)
+    }, [u]);
+    return <>
+        <img ref={ref} src={src} style={mergeObject({
             objectFit: "cover",
             zIndex: 2,
-            position: "relative"
+            position: "absolute",
+            opacity: 0
         }, style)} />
-        <ImageMock size={280} colors={pixels} x={details} y={details} style={{
-            width: "100%",
-            height: "100%",
-        }}/>
-    </div>
+        <div style={{
+            overflow: "hidden",
+            position: "relative",
+            width,
+            height
+        }}>
+            <img src={src} style={mergeObject<React.CSSProperties | undefined>({
+                objectFit: "cover",
+                zIndex: 2,
+                position: "absolute",
+                maxWidth: width,
+                maxHeight: height
+            })} />
+            <ImageMock size={280} colors={pixels} x={details} y={details} style={{
+                width,
+                height
+            }}/>
+        </div>
+    </>
 
     if(!pixels)
         return <div style={{
