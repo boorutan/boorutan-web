@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export const useRerender = (): [number, ()=> void] => {
+export const useRerender = () => {
     const [_, s_] = useState(() => Math.random())
-    return [_, ()=> s_(Math.random())]
+    return ()=> s_(Math.random())
 }
