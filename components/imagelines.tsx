@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import BooruImage, { BooruImageFromPost } from "./booruImage"
 import useWindowSize from "@/hook/useWindowSize"
 import Link from "next/link"
+import {ImagelinesImage} from "@/components/imagelinesimage";
 
 const getAspect = (width: number, height: number) => height / width
 const getSize = (post: any): [number, number] => {
@@ -37,14 +38,7 @@ const ImageLines = ({posts, line_length, booru}:{
             <div key={i} style={{ width: `calc(100% / ${Math.round(width / 500) || 3})`, marginBottom: '25px' }}>
                 {arr.map((p: any) => (
                     <div key={p.file_url} style={{ width: "calc(100% - 10px)", marginRight: "5px", marginLeft: "5px", marginBottom: "10px" }}>
-                        <Link scroll={false} href={`/${p.booru_type || booru}/${p.id}`}>
-                            <BooruImageFromPost style={{
-                                width: "calc(100% - 10px)",
-                                aspectRatio: `${getSize(p)[0]} / ${getSize(p)[1]}`,
-                                backgroundColor: "#eee",
-                                borderRadius: 40
-                            }} post={p} />
-                        </Link>
+                        <ImagelinesImage post={p} booru={booru} />
                     </div>
                 ))}
             </div>
