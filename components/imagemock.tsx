@@ -16,7 +16,7 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
 }) => {
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
-    const [u, update ] = useRerender()
+    const update = useRerender()
     const ref = useRef<any>(null)
     useLayoutEffect(() => {
         setWidth(ref.current?.clientWidth || 0)
@@ -30,13 +30,14 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
             console.log("hello")
         }, 100)
         return ()=> clearInterval(refresh)
-    }, [u]);
+    }, [update]);
     return <>
         <img ref={ref} src={src} style={mergeObject({
             objectFit: "cover",
             zIndex: 2,
             position: "absolute",
-            opacity: 0
+            opacity: 0,
+            pointerEvents: "none"
         }, style)} />
         <div style={{
             overflow: "hidden",
@@ -49,9 +50,9 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
                 zIndex: 2,
                 position: "absolute",
                 maxWidth: width,
-                maxHeight: height
+                maxHeight: height,
             })} />
-            <ImageMock size={280} colors={pixels} x={details} y={details} style={{
+            <ImageMock size={300} colors={pixels} x={details} y={details} style={{
                 width,
                 height
             }}/>
