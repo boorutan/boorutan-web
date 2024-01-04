@@ -10,7 +10,7 @@ import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
-import {BooruImageList, BooruImageListOption, useBooruImageList} from "@/hook/useBooruImageList";
+import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruImageList} from "@/hook/useBooruImageList";
 import {pages} from "next/dist/build/webpack/loaders/next-route-loader/templates/app-page";
 
 type init = {
@@ -100,9 +100,9 @@ const color: any = {
 const Selector = ({init, onChange, value}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
-    value: BooruImageList
+    value: BooruImageList | null
 }) => {
-    const [like, setLike] = useState(value.like)
+    const [like, setLike] = useState(value?.like)
     const [query, setQuery] = useState("")
     const [suggest, setSuggest] = useState<suggest>([])
 
@@ -111,9 +111,9 @@ const Selector = ({init, onChange, value}:{
         name: string,
         post_count: string
     }>>(null)
-    const [booru, setBooru] = useState(value.booru)
+    const [booru, setBooru] = useState(value?.booru)
 
-    const [bypassCache, setBypassCache] = useState(value.bypassCache)
+    const [bypassCache, setBypassCache] = useState(value?.bypassCache)
 
     /*const [tags, setTags] = useState(init.tags.concat([
         {
@@ -127,9 +127,9 @@ const Selector = ({init, onChange, value}:{
     ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
-        setLike(value.like)
-        setBooru(value.booru)
-        setBypassCache(value.bypassCache)
+        setLike(value?.like)
+        setBooru(value?.booru)
+        setBypassCache(value?.bypassCache)
     }, [value]);
     useEffect(() => {
         if(value == null) return
@@ -343,13 +343,27 @@ const BooruImageInfinite = ({init}: {
     const [wait, setWait] = useState<boolean>(false)
     //const [page, setPage] = useState(2)
     //const [bypassCache, setBypassCache] = useState(false)
-    const [settings, setSettings] = useBooruImageList()
-    const {like, tags, booru, posts, page, bypassCache} = settings
-    useEffect(() => {
+    const [settings, setSettings] = useBooruImageList(async (s)=> {
+        const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${s.page - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        return {
+            posts: posts.filter((p)=> !!getSampleUrl(p)),
+            page: s.page
+        }
+    })
+    const {like, tags, booru, posts, page, bypassCache} = settings || defaultBooruImageList
+    /*useEffectApi(async () => {
+        console.log(settings)
+        const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+        setSettings((s)=> ({
+            posts: posts.filter((p)=> !!getSampleUrl(p)),
+            page: s.page + 1
+        }))
+    }, [settings]);*/
+    /*useEffect(() => {
         setSettings((s)=> ({
             posts: init.posts
         }))
-    }, [init]);
+    }, [init]);*/
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
