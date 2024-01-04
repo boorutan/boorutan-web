@@ -22,7 +22,8 @@ export const ImagelinesImage = ({post, booru}:{
     const [isMouseHover, setIsMouseHover] = useState(false)
     const [progress, setProgress] = useState(0)
     const [[mouseX, mouseY], setMousePosition] = useState<[number, number]>([0, 0])
-    const pointerSize = progress
+    const [like, setLike] = useState(true)
+    const pointerSize = progress >= 100 ? 1600 : progress * 10
     useEffect(() => {
         const refresh = setTimeout(()=> {
             const speed = 5
@@ -45,23 +46,31 @@ export const ImagelinesImage = ({post, booru}:{
             setIsMouseDown(false)
         }}
         onMouseMove={(e)=> {
-            setMousePosition([e.clientX, e.clientY])
+            setMousePosition([e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop])
         }}
         style={{
-            cursor: "pointer"
+            cursor: "pointer",
+            width: "calc(100% - 10px)",
+            aspectRatio: `${getSize(post)[0]} / ${getSize(post)[1]}`,
+            overflow: "hidden",
+            position: "relative"
         }}
         onClick={async ()=> {
-            /*if(progress > 50) {
+            if(progress >= 100) {
                 const res = await req(`/like/${post.booru_type || booru}/${post.id}`, {
-                    method: "POST"
+                    method: "POST",
+                    body: {
+                        like,
+                    }
                 })
+                setLike((v)=> !v)
                 return
             }
-            router.push(`/${post.booru_type || booru}/${post.id}`)*/
+            router.push(`/${post.booru_type || booru}/${post.id}`)
         }}
     >
         <BooruImageFromPost style={{
-            width: "calc(100% - 10px)",
+            width: "100%",
             aspectRatio: `${getSize(post)[0]} / ${getSize(post)[1]}`,
             backgroundColor: "#eee",
             borderRadius: 40,
@@ -77,7 +86,8 @@ export const ImagelinesImage = ({post, booru}:{
             left: mouseX - pointerSize / 2,
             zIndex: 100,
             borderRadius: "100%",
-            transition: "all .3s ease"
+            transition: "all .1s ease",
+            pointerEvents: "none"
         }} />}
     </div>
 
