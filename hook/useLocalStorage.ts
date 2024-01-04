@@ -3,8 +3,8 @@ import { useEffect, useState } from "react"
 type Fn<T> = ((value: T)=> T)
 type V<T> = T
 
-export const useLocalStorage = <T>(key: string, init?: T): [T, (value: Fn<T> | V<T>)=> void] => {
-    const [state, setState] = useState<T>(init as any)
+export const useLocalStorage = <T>(key: string, init?: T, loading?: any): [T, (value: Fn<T> | V<T>)=> void] => {
+    const [state, setState] = useState<T>(loading == undefined ? init : loading)
     useEffect(()=> {
         setState(()=> {
             const value = localStorage.getItem(key)
