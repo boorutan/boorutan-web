@@ -45,7 +45,7 @@ export const ImagelinesImage = ({post, booru}:{
             setIsMouseHover(false)
             setIsMouseDown(false)
         }}
-        onMouseMove={(e)=> {
+        onMouseMove={(e: any)=> {
             setMousePosition([e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop])
         }}
         style={{
