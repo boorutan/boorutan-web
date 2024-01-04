@@ -1,5 +1,5 @@
 import {CSSProperties, useEffect, useLayoutEffect, useRef, useState} from "react";
-import {mergeObject} from "@/lib/utils/object";
+import {mergeObject, mergeObjectForce} from "@/lib/utils/object";
 import {useRerender} from "@/hook/useRerender";
 
 type Pixel = {
@@ -27,14 +27,12 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
             setWidth(ref.current?.clientWidth || 0)
             setHeight(ref.current?.clientHeight || 0)
             update()
-            console.log("hello")
         }, 100)
         return ()=> clearInterval(refresh)
     }, [update]);
     return <>
-        <img ref={ref} src={src} style={mergeObject({
+        <img ref={ref} src={src} style={mergeObjectForce({
             objectFit: "cover",
-            zIndex: 2,
             position: "absolute",
             opacity: 0,
             pointerEvents: "none"
@@ -47,14 +45,14 @@ export const SimpleImageMock = ({details = 10, src, pixels, style}: {
         }}>
             <img src={src} style={mergeObject<React.CSSProperties | undefined>({
                 objectFit: "cover",
-                zIndex: 2,
                 position: "absolute",
                 maxWidth: width,
                 maxHeight: height,
+                zIndex: 2,
             })} />
             <ImageMock size={300} colors={pixels} x={details} y={details} style={{
                 width,
-                height
+                height,
             }}/>
         </div>
     </>
