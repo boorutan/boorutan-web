@@ -1,6 +1,8 @@
 import {useLocalStorage} from "@/hook/useLocalStorage";
 import {useRouter, useSearchParams} from "next/navigation";
 import {mergeObjectForce} from "@/lib/utils/object";
+import {useState} from "react";
+import {useEffectApi} from "@/hook/useApi";
 
 export type BooruImageList = {
     like: boolean,
@@ -12,7 +14,7 @@ export type BooruImageList = {
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
 
-const defaultBooruImageList: BooruImageList = {
+export const defaultBooruImageList: BooruImageList = {
     like: false,
     tags: "",
     booru: "",
@@ -24,9 +26,10 @@ const defaultBooruImageList: BooruImageList = {
 type Fn<T, Y = T> = ((value: T)=> Y)
 type V<T> = T
 
-export const useBooruImageList = (): [BooruImageList, (s: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>)=> void] => {
+export const useBooruImageList = (onLoad?: Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>): [BooruImageList | null, (s: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>)=> void] => {
     const router = useRouter()
     const query = useSearchParams()
+    const [load, setLoad] = useState(false)
     const id = query.get("id") || crypto.randomUUID().slice(0, 5)
     const [settings, setSettings] = useLocalStorage<BooruImageList>(id , defaultBooruImageList, null)
     if(!query.get(id) && !settings) {
@@ -38,6 +41,12 @@ export const useBooruImageList = (): [BooruImageList, (s: Fn<BooruImageList, Boo
         }
         setSettings((v)=> mergeObjectForce(v, settings))
     }
-    console.log(settings)
+    useEffectApi(async ()=> {
+        if(!load && settings && onLoad) {
+            setLoad(true)
+            const v = await onLoad(settings)
+            updateSettings(v || {})
+        }
+    },[settings])
     return [settings, updateSettings]
 }
