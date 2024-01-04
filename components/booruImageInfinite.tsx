@@ -264,8 +264,20 @@ const Selector = ({init, onChange}:{
                 transition: "all .3s ease"
             }}>
                 {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <SelectorButton onClick={()=> {
-                    setTag((name)=> b.name==name?"":b.name)
-                }} key={i} active={tag==b.name}>{b.name}</SelectorButton>)}
+                    setTag((tag)=> {
+                        const t = {
+                            name: b.name,
+                            category: "5",
+                            post_count: "0"
+                        }
+                        if(!tag) return [t]
+                        if(tag.map((v)=> v.name).includes(t.name)) {
+                            return tag.filter((v)=> v.name != t.name)
+                        }
+                        return [t].concat(tag)
+                    })
+                    //setTag((name)=> b.name==name?"":b.name)
+                }} key={i} active={tag?.map((v)=> v.name).includes(query)}>{b.name}</SelectorButton>)}
                 {!showMore && <SelectorButton onClick={()=> {
                     setShowMore((s)=> !s)
                 }} active>Show more</SelectorButton>}
