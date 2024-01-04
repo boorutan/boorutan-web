@@ -11,7 +11,6 @@ import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
 import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruImageList} from "@/hook/useBooruImageList";
-import {pages} from "next/dist/build/webpack/loaders/next-route-loader/templates/app-page";
 
 type init = {
     tags: any,
