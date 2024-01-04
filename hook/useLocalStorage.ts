@@ -4,7 +4,7 @@ type Fn<T> = ((value: T)=> T)
 type V<T> = T
 
 export const useLocalStorage = <T>(key: string, init?: T, loading?: any): [T, (value: Fn<T> | V<T>)=> void] => {
-    const [state, setState] = useState<T>(loading == undefined ? init : loading)
+    const [state, setState] = useState<T>(loading === undefined ? init : loading)
     useEffect(()=> {
         setState(()=> {
             const value = localStorage.getItem(key)
