@@ -351,25 +351,31 @@ const BooruImageInfinite = ({init}: {
     //const [page, setPage] = useState(2)
     //const [bypassCache, setBypassCache] = useState(false)
     const [settings, setSettings] = useBooruImageList(async (s)=> {
-        const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${s.page - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
-        scrollSelector()
-        if(s.page <= 2) {
+        const basePage = s.page - s.pageBack
+        const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        if(basePage <= 2) {
             setIsShowHistory(false)
             return {
                 posts: posts.filter((p)=> !!getSampleUrl(p)),
-                page: s.page,
+                page: basePage,
+                pageBack: 0,
+                postsBack: []
             }
         }
         setIsShowHistory(true)
-        const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${s.page - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        const interval = setInterval(()=> {
+            scrollSelector()
+            clearInterval(interval)
+        }, 50)
         return {
             posts: posts.filter((p)=> !!getSampleUrl(p)),
-            page: s.page,
-            pageBack: 1,
-            postsBack: postsBack
+            page: basePage,
+            pageBack: 0,
+            postsBack: postsBack.filter((p)=> !!getSampleUrl(p)).reverse()
         }
     })
-    const {like, tags, booru, posts, page, bypassCache} = settings || defaultBooruImageList
+    const {like, tags, booru, posts, page, bypassCache, pageBack, postsBack} = settings || defaultBooruImageList
 
     const ref = useRef<any>(null)
 
@@ -399,14 +405,20 @@ const BooruImageInfinite = ({init}: {
         }}>
             <InfiniteScroll
                 pageStart={1}
-                hasMore={!wait}
+                hasMore={!wait && (page - pageBack - 3 >= 0)}
                 loadMore={async (id)=> {
+                    if(page - pageBack - 3 == 0) {
+                        setSettings((s)=> ({
+                            pageBack: s.pageBack + 1
+                        }))
+                        return
+                    }
                     if(like)
                         return setWait(true)
-                    const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                    const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page - pageBack - 3}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
                     setSettings((s)=> ({
-                        posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
-                        page: s.page + 1
+                        postsBack: s.postsBack.concat(posts.filter((p)=> !!getSampleUrl(p)).reverse()),
+                        pageBack: s.pageBack + 1
                     }))
                     //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
                     //setPage((page: number)=> page + 1)
@@ -415,7 +427,7 @@ const BooruImageInfinite = ({init}: {
                 initialLoad={false}
                 isReverse={true}
             >
-                <ImageLines isReverse={true} booru={booru || "danbooru"} posts={posts} line_length={3} />
+                <ImageLines isReverse={true} booru={booru || "danbooru"} posts={postsBack} line_length={3} />
             </InfiniteScroll>
         </div>}
         <div ref={ref} style={{
@@ -443,7 +455,9 @@ const BooruImageInfinite = ({init}: {
                     like: v.like,
                     bypassCache: v.bypassCache,
                     posts: p.filter((p)=> !!getSampleUrl(p)),
-                    page: 2
+                    page: 2,
+                    pageBack: 0,
+                    postsBack: []
                 }))
                 const interval = setInterval(()=> {
                     scrollSelector()
