@@ -104,21 +104,13 @@ const Selector = ({init, onChange, value}:{
     const [like, setLike] = useState(value?.like)
     const [query, setQuery] = useState(value?.query || "")
     const [suggest, setSuggest] = useState<suggest>([])
-
     const [tag, setTag] = useState<null | Array<{
         category: string,
         name: string,
         post_count: string
     }>>(value?.tagsRaw || null)
     const [booru, setBooru] = useState(value?.booru)
-
     const [bypassCache, setBypassCache] = useState(value?.bypassCache)
-
-    /*const [tags, setTags] = useState(init.tags.concat([
-        {
-            name: "loli"
-        }
-    ]))*/
     const [tags, setTags] = useState([
         { name: "loli" },
         { name: "hololive" },
@@ -134,7 +126,6 @@ const Selector = ({init, onChange, value}:{
     }, [value]);
     useEffect(() => {
         if(value == null) return
-        //onChange && onChange(tag ? tag.map((v)=> v.name).join(" ") : "", booru, like, bypassCache)
         onChange && onChange({
             tags: tag ? tag.map((v)=> v.name).join(" ") : "",
             booru,
@@ -173,7 +164,6 @@ const Selector = ({init, onChange, value}:{
                     return
             const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
             setSuggest(sorted)
-            // Send Axios request here
         }, 500)
         return () => clearTimeout(delayDebounceFn)
     }, [query])
@@ -228,7 +218,6 @@ const Selector = ({init, onChange, value}:{
                     }
                     return [b].concat(tag)
                 })
-                //setTag((name)=> b.name==name?"":b.name)
             }} key={i} active={tag?.map((v)=> v.name).includes(b.name)}><span style={{color: color[b.category]}}>{b.name}</span> {b.post_count}</SelectorButton>)}
             {query && <SelectorButton onClick={()=> {
                 setTag((tag)=> {
@@ -243,7 +232,6 @@ const Selector = ({init, onChange, value}:{
                     }
                     return [t].concat(tag)
                 })
-                //setTag((name)=> name=="" ? query : "")
             }} active={tag?.map((v)=> v.name).includes(query)}>{query}</SelectorButton>}
         </div>
         {(tag && !!tag.length) && <div style={{
@@ -261,7 +249,6 @@ const Selector = ({init, onChange, value}:{
                     if(!tag) return null
                     return tag.filter((v)=> v.name != b.name)
                 })
-                //setTag((name)=> b.name==name?"":b.name)
             }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></SelectorButton>)}
         </div>}
         <div style={{
@@ -294,7 +281,6 @@ const Selector = ({init, onChange, value}:{
                         }
                         return [t].concat(tag)
                     })
-                    //setTag((name)=> b.name==name?"":b.name)
                 }} key={i} active={tag?.map((v)=> v.name).includes(query)}>{b.name}</SelectorButton>)}
                 {!showMore && <SelectorButton onClick={()=> {
                     setShowMore((s)=> !s)
@@ -345,14 +331,9 @@ const BooruImageInfinite = ({init}: {
             top: ref.current.offsetTop // - window.innerHeight - ref.current.offsetHeight
         })
     }
-    //const [like, setLike] = useState(false)
-    //const [tags, setTags] = useState("")
-    //const [booru, setBooru] = useState("")
-    //const [posts, setPosts] = useState<Array<any>>(init.posts)
+
     const [wait, setWait] = useState<boolean>(false)
     const [isShowHistory, setIsShowHistory] = useState(false)
-    //const [page, setPage] = useState(2)
-    //const [bypassCache, setBypassCache] = useState(false)
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const basePage = s.page - s.pageBack
         const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
@@ -379,22 +360,7 @@ const BooruImageInfinite = ({init}: {
         }
     })
     const {like, tags, booru, posts, page, bypassCache, pageBack, postsBack} = settings || defaultBooruImageList
-
     const ref = useRef<any>(null)
-
-    /*useEffectApi(async () => {
-        console.log(settings)
-        const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
-        setSettings((s)=> ({
-            posts: posts.filter((p)=> !!getSampleUrl(p)),
-            page: s.page + 1
-        }))
-    }, [settings]);*/
-    /*useEffect(() => {
-        setSettings((s)=> ({
-            posts: init.posts
-        }))
-    }, [init]);*/
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
@@ -423,8 +389,6 @@ const BooruImageInfinite = ({init}: {
                         postsBack: s.postsBack.concat(posts.filter((p)=> !!getSampleUrl(p)).reverse()),
                         pageBack: s.pageBack + 1
                     }))
-                    //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
-                    //setPage((page: number)=> page + 1)
                     setWait(true)
                 }}
                 initialLoad={false}
@@ -438,18 +402,6 @@ const BooruImageInfinite = ({init}: {
         }}>
             <Selector value={settings} onChange={async (v)=> {
                 if(v.tags==tags&&v.booru==booru&&v.like==like&&v.bypassCache==bypassCache) return
-                //window.scrollTo({ top: 0 })
-
-                /*setSettings((s)=> ({
-                    tags: t,
-                    booru: b,
-                    like: l,
-                    bypassCache: c
-                }))*/
-                //setTags(t)
-                //setBooru(b)
-                //setLike(l)
-                //setBypassCache(c)
                 const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
                 console.log(v)
                 setSettings((s)=> ({
@@ -468,9 +420,7 @@ const BooruImageInfinite = ({init}: {
                     scrollSelector()
                     clearInterval(interval)
                 }, 50)
-                //setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
                 setWait(true)
-                //setPage(2)
             }} init={init} />
         </div>
         <WarpTop />
@@ -485,8 +435,6 @@ const BooruImageInfinite = ({init}: {
                     posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
                     page: s.page + 1
                 }))
-                //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
-                //setPage((page: number)=> page + 1)
                 setWait(true)
             }}
             initialLoad={false}
@@ -494,59 +442,6 @@ const BooruImageInfinite = ({init}: {
             <ImageLines booru={booru || "danbooru"} posts={posts} line_length={3} />
         </InfiniteScroll>
     </div>
-
-    return <InfiniteScroll
-        pageStart={1}
-        hasMore={!wait}
-        loadMore={async (id)=> {
-            if(like)
-                return setWait(true)
-            const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
-            setSettings((s)=> ({
-                posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
-                page: s.page + 1
-            }))
-            //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
-            //setPage((page: number)=> page + 1)
-            setWait(true)
-        }}
-        initialLoad={false}
-    >
-        <div style={{
-            padding: 16
-        }}>
-            <Selector value={settings} onChange={async (v)=> {
-                if(v.tags==tags&&v.booru==booru&&v.like==like&&v.bypassCache==bypassCache) return
-                //window.scrollTo({ top: 0 })
-
-                /*setSettings((s)=> ({
-                    tags: t,
-                    booru: b,
-                    like: l,
-                    bypassCache: c
-                }))*/
-                //setTags(t)
-                //setBooru(b)
-                //setLike(l)
-                //setBypassCache(c)
-                const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
-                console.log(v)
-                setSettings((s)=> ({
-                    tags: v.tags,
-                    booru: v.booru,
-                    like: v.like,
-                    bypassCache: v.bypassCache,
-                    posts: p.filter((p)=> !!getSampleUrl(p)),
-                    page: 2
-                }))
-                //setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
-                setWait(true)
-                //setPage(2)
-            }} init={init} />
-        </div>
-        <WarpTop />
-        <ImageLines booru={booru || "danbooru"} posts={posts} line_length={3} />
-    </InfiniteScroll>
 }
 export {
     BooruImageInfinite as default
