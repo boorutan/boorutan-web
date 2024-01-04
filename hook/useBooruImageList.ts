@@ -7,24 +7,28 @@ import {useEffectApi} from "@/hook/useApi";
 export type BooruImageList = {
     like: boolean,
     tags: string,
+    tagsRaw: Array<any> | null,
     booru: string,
     posts: Array<any>,
     postsBack: Array<any>,
     page: number,
     pageBack: number,
-    bypassCache: boolean
+    bypassCache: boolean,
+    query: string
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
 
 export const defaultBooruImageList: BooruImageList = {
     like: false,
     tags: "",
+    tagsRaw: null,
     booru: "",
     posts: [],
     postsBack: [],
     page: 2,
     pageBack: 0,
-    bypassCache: false
+    bypassCache: false,
+    query: ""
 }
 
 type Fn<T, Y = T> = ((value: T)=> Y)

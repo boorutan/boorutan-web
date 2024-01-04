@@ -103,14 +103,14 @@ const Selector = ({init, onChange, value}:{
     value: BooruImageList | null
 }) => {
     const [like, setLike] = useState(value?.like)
-    const [query, setQuery] = useState("")
+    const [query, setQuery] = useState(value?.query || "")
     const [suggest, setSuggest] = useState<suggest>([])
 
     const [tag, setTag] = useState<null | Array<{
         category: string,
         name: string,
         post_count: string
-    }>>(null)
+    }>>(value?.tagsRaw || null)
     const [booru, setBooru] = useState(value?.booru)
 
     const [bypassCache, setBypassCache] = useState(value?.bypassCache)
@@ -130,6 +130,8 @@ const Selector = ({init, onChange, value}:{
         setLike(value?.like)
         setBooru(value?.booru)
         setBypassCache(value?.bypassCache)
+        setTag(value?.tagsRaw || null)
+        setQuery(value?.query || "")
     }, [value]);
     useEffect(() => {
         if(value == null) return
@@ -138,7 +140,9 @@ const Selector = ({init, onChange, value}:{
             tags: tag ? tag.map((v)=> v.name).join(" ") : "",
             booru,
             like,
-            bypassCache
+            bypassCache,
+            tagsRaw: tag,
+            query,
         })
     }, [tag, booru, like, bypassCache]);
     const boorus = [
@@ -457,7 +461,9 @@ const BooruImageInfinite = ({init}: {
                     posts: p.filter((p)=> !!getSampleUrl(p)),
                     page: 2,
                     pageBack: 0,
-                    postsBack: []
+                    postsBack: [],
+                    tagsRaw: v.tagsRaw,
+                    query: v.query
                 }))
                 const interval = setInterval(()=> {
                     scrollSelector()
