@@ -58,7 +58,11 @@ const ImageModal = ({post, category, notModal, booru}:{
         !notModal && router.back()
     }, [notModal, router])
     console.log(post, category);
-    return <div id={"modal"} onClick={back} style={{
+    return <div id={"modal"} onClick={(e: any)=> {
+        if(e.target.nodeName == "DIV") {
+            back()
+        }
+    }} style={{
         position: "fixed",
         top: 0,
         width: "100vw",
@@ -79,8 +83,10 @@ const ImageModal = ({post, category, notModal, booru}:{
         }}>
             <div style={{
                 width: "100%",
-                height: "calc(100% - 32px)",
-                position: "absolute"
+                //height: "calc(100% - 32px)",
+                position: "absolute",
+                zIndex: 3,
+                top: 16
             }}>
                 <div style={{
                     display: "flex",
@@ -90,7 +96,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     borderRadius: 100,
                     flexWrap: "wrap",
                 }}>
-                    {Object.keys(category).map((c, i) => <p style={{color: color[category[c]], margin: 0}} key={i}>{c}</p>)}
+                    {Object.keys(category).map((c, i) => <p style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{c}</p>)}
                 </div>
             </div>
             <BooruImageFromPost  mock style={{
@@ -99,28 +105,37 @@ const ImageModal = ({post, category, notModal, booru}:{
                 width: "auto",
                 height: "auto",
                 objectFit: "contain",
+                pointerEvents: "all",
+                cursor: "pointer"
                 //boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px"
             }} original post={post} />
             <div style={{
                 position: "absolute",
                 bottom: 16,
                 left: 32,
+                zIndex: 3
             }}>
                 <p style={{
-                    color: "#000"
+                    color: "#000",
+                    cursor: "pointer"
                 }}>{getTitle(post, category)}</p>
                 <p style={{
-                    color: "#000"
+                    color: "#000",
+                    cursor: "pointer"
                 }}>{getDescription(post, category)}</p>
             </div>
             <div style={{
                 position: "absolute",
                 bottom: 16,
-                right: 32
+                right: 32,
+                cursor: "pointer"
             }}>
                 <p onClick={async ()=> {
                     const res = await req(`/like/${booru}/${post.id}`, {
-                        method: "POST"
+                        method: "POST",
+                        body: {
+                            like: true
+                        }
                     })
                     setLiked(true)
                 }}>Like</p>
