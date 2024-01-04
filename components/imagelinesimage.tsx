@@ -81,12 +81,12 @@ export const ImagelinesImage = ({post, booru}:{
             position: "absolute",
             width: pointerSize,
             height: pointerSize,
-            backdropFilter: "blur(10px)",
+            backdropFilter: `blur(10px) grayscale(${like ? "0" : ".8"})`,
             top: mouseY + window.scrollY - pointerSize / 2,
             left: mouseX - pointerSize / 2,
             zIndex: 100,
             borderRadius: "100%",
-            transition: "all .1s ease",
+            transition: "all .1s ease, backdrop-filter 1s ease",
             pointerEvents: "none"
         }} />}
     </div>
