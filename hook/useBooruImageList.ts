@@ -9,7 +9,9 @@ export type BooruImageList = {
     tags: string,
     booru: string,
     posts: Array<any>,
+    postsBack: Array<any>,
     page: number,
+    pageBack: number,
     bypassCache: boolean
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
@@ -19,7 +21,9 @@ export const defaultBooruImageList: BooruImageList = {
     tags: "",
     booru: "",
     posts: [],
+    postsBack: [],
     page: 2,
+    pageBack: 0,
     bypassCache: false
 }
 

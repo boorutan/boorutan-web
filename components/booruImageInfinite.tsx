@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import ImageLines from './imagelines';
 import { req } from '@/lib/fetch';
@@ -336,21 +336,43 @@ const Selector = ({init, onChange, value}:{
 const BooruImageInfinite = ({init}: {
     init: init
 }) => {
+    const scrollSelector = () => {
+        console.log(ref.current.offsetTop)
+        window.scrollTo({
+            top: ref.current.offsetTop // - window.innerHeight - ref.current.offsetHeight
+        })
+    }
     //const [like, setLike] = useState(false)
     //const [tags, setTags] = useState("")
     //const [booru, setBooru] = useState("")
     //const [posts, setPosts] = useState<Array<any>>(init.posts)
     const [wait, setWait] = useState<boolean>(false)
+    const [isShowHistory, setIsShowHistory] = useState(false)
     //const [page, setPage] = useState(2)
     //const [bypassCache, setBypassCache] = useState(false)
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${s.page - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        scrollSelector()
+        if(s.page <= 2) {
+            setIsShowHistory(false)
+            return {
+                posts: posts.filter((p)=> !!getSampleUrl(p)),
+                page: s.page,
+            }
+        }
+        setIsShowHistory(true)
+        const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${s.page - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
         return {
             posts: posts.filter((p)=> !!getSampleUrl(p)),
-            page: s.page
+            page: s.page,
+            pageBack: 1,
+            postsBack: postsBack
         }
     })
     const {like, tags, booru, posts, page, bypassCache} = settings || defaultBooruImageList
+
+    const ref = useRef<any>(null)
+
     /*useEffectApi(async () => {
         console.log(settings)
         const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
@@ -370,6 +392,90 @@ const BooruImageInfinite = ({init}: {
         }, 1000)
         return ()=> clearInterval(interval)
     },[])
+    return <div>
+        {isShowHistory && <div style={{
+            display: "flex",
+            flexDirection: "column-reverse",
+        }}>
+            <InfiniteScroll
+                pageStart={1}
+                hasMore={!wait}
+                loadMore={async (id)=> {
+                    if(like)
+                        return setWait(true)
+                    const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                    setSettings((s)=> ({
+                        posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
+                        page: s.page + 1
+                    }))
+                    //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
+                    //setPage((page: number)=> page + 1)
+                    setWait(true)
+                }}
+                initialLoad={false}
+                isReverse={true}
+            >
+                <ImageLines isReverse={true} booru={booru || "danbooru"} posts={posts} line_length={3} />
+            </InfiniteScroll>
+        </div>}
+        <div ref={ref} style={{
+            padding: 16
+        }}>
+            <Selector value={settings} onChange={async (v)=> {
+                if(v.tags==tags&&v.booru==booru&&v.like==like&&v.bypassCache==bypassCache) return
+                //window.scrollTo({ top: 0 })
+
+                /*setSettings((s)=> ({
+                    tags: t,
+                    booru: b,
+                    like: l,
+                    bypassCache: c
+                }))*/
+                //setTags(t)
+                //setBooru(b)
+                //setLike(l)
+                //setBypassCache(c)
+                const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
+                console.log(v)
+                setSettings((s)=> ({
+                    tags: v.tags,
+                    booru: v.booru,
+                    like: v.like,
+                    bypassCache: v.bypassCache,
+                    posts: p.filter((p)=> !!getSampleUrl(p)),
+                    page: 2
+                }))
+                const interval = setInterval(()=> {
+                    scrollSelector()
+                    clearInterval(interval)
+                }, 50)
+                //setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
+                setWait(true)
+                //setPage(2)
+            }} init={init} />
+        </div>
+        <WarpTop />
+        <InfiniteScroll
+            pageStart={1}
+            hasMore={!wait}
+            loadMore={async (id)=> {
+                if(like)
+                    return setWait(true)
+                const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                setSettings((s)=> ({
+                    posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
+                    page: s.page + 1
+                }))
+                //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
+                //setPage((page: number)=> page + 1)
+                setWait(true)
+            }}
+            initialLoad={false}
+        >
+            <ImageLines booru={booru || "danbooru"} posts={posts} line_length={3} />
+        </InfiniteScroll>
+    </div>
+
     return <InfiniteScroll
         pageStart={1}
         hasMore={!wait}
