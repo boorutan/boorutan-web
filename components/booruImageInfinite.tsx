@@ -10,6 +10,8 @@ import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
+import {useBooruImageList} from "@/hook/useBooruImageList";
+import {pages} from "next/dist/build/webpack/loaders/next-route-loader/templates/app-page";
 
 type init = {
     tags: any,
@@ -159,7 +161,6 @@ const Selector = ({init, onChange}:{
         }, 500)
         return () => clearTimeout(delayDebounceFn)
     }, [query])
-    console.log(tag)
     return <div style={{
         gap: 12,
         display: "flex",
@@ -322,13 +323,20 @@ const Selector = ({init, onChange}:{
 const BooruImageInfinite = ({init}: {
     init: init
 }) => {
-    const [like, setLike] = useState(false)
-    const [tags, setTags] = useState("")
-    const [booru, setBooru] = useState("")
-    const [posts, setPosts] = useState<Array<any>>(init.posts)
+    //const [like, setLike] = useState(false)
+    //const [tags, setTags] = useState("")
+    //const [booru, setBooru] = useState("")
+    //const [posts, setPosts] = useState<Array<any>>(init.posts)
     const [wait, setWait] = useState<boolean>(false)
-    const [page, setPage] = useState(2)
-    const [bypassCache, setBypassCache] = useState(false)
+    //const [page, setPage] = useState(2)
+    //const [bypassCache, setBypassCache] = useState(false)
+    const [{like, tags, booru, posts, page, bypassCache}, setSettings] = useBooruImageList()
+    useEffect(() => {
+        console.log(like)
+        setSettings((s)=> ({
+            posts: init.posts
+        }))
+    }, [init]);
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
@@ -342,8 +350,12 @@ const BooruImageInfinite = ({init}: {
             if(like)
                 return setWait(true)
             const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
-            setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
-            setPage((page: number)=> page + 1)
+            setSettings((s)=> ({
+                posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
+                page: s.page + 1
+            }))
+            //setPosts((ps)=> ps.concat(posts.filter((p)=> !!getSampleUrl(p))))
+            //setPage((page: number)=> page + 1)
             setWait(true)
         }}
         initialLoad={false}
@@ -353,16 +365,30 @@ const BooruImageInfinite = ({init}: {
         }}>
             <Selector onChange={async (t, b, l, c)=> {
                 if(t==tags&&b==booru&&l==like&&c==bypassCache) return
-                window.scrollTo({ top: 0 })
-                setTags(t)
-                setBooru(b)
-                setLike(l)
-                setBypassCache(c)
+                //window.scrollTo({ top: 0 })
 
+                /*setSettings((s)=> ({
+                    tags: t,
+                    booru: b,
+                    like: l,
+                    bypassCache: c
+                }))*/
+                //setTags(t)
+                //setBooru(b)
+                //setLike(l)
+                //setBypassCache(c)
                 const p: Array<any> = await req<any>(`/${l ? "like" : "post"}?page=${1}&booru=${b}&tags=${t}${c?"&bypasscache=true":""}`)
-                setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
+                setSettings((s)=> ({
+                    tags: t,
+                    booru: b,
+                    like: l,
+                    bypassCache: c,
+                    posts: p.filter((p)=> !!getSampleUrl(p)),
+                    page: 2
+                }))
+                //setPosts((ps)=> p.filter((p)=> !!getSampleUrl(p)))
                 setWait(true)
-                setPage(2)
+                //setPage(2)
             }} init={init} />
         </div>
         <WarpTop />
