@@ -10,7 +10,7 @@ import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
-import {useBooruImageList} from "@/hook/useBooruImageList";
+import {BooruImageList, BooruImageListOption, useBooruImageList} from "@/hook/useBooruImageList";
 import {pages} from "next/dist/build/webpack/loaders/next-route-loader/templates/app-page";
 
 type init = {
@@ -97,11 +97,12 @@ const color: any = {
     "5": "#FFEB3B", // meta
 }
 
-const Selector = ({init, onChange}:{
+const Selector = ({init, onChange, value}:{
     init: init,
-    onChange?: (tag: string, booru: string, like: boolean, bypassCache: boolean) => void
+    onChange?: (option: BooruImageListOption) => void,
+    value: BooruImageList
 }) => {
-    const [like, setLike] = useState(false)
+    const [like, setLike] = useState(value.like)
     const [query, setQuery] = useState("")
     const [suggest, setSuggest] = useState<suggest>([])
 
@@ -110,9 +111,9 @@ const Selector = ({init, onChange}:{
         name: string,
         post_count: string
     }>>(null)
-    const [booru, setBooru] = useState("")
+    const [booru, setBooru] = useState(value.booru)
 
-    const [bypassCache, setBypassCache] = useState(false)
+    const [bypassCache, setBypassCache] = useState(value.bypassCache)
 
     /*const [tags, setTags] = useState(init.tags.concat([
         {
@@ -126,8 +127,20 @@ const Selector = ({init, onChange}:{
     ])
     const [showMore, setShowMore] = useState(false)
     useEffect(() => {
-        onChange && onChange(tag ? tag.map((v)=> v.name).join(" ") : "", booru, like, bypassCache)
-    }, [tag, booru, onChange, like, bypassCache]);
+        setLike(value.like)
+        setBooru(value.booru)
+        setBypassCache(value.bypassCache)
+    }, [value]);
+    useEffect(() => {
+        if(value == null) return
+        //onChange && onChange(tag ? tag.map((v)=> v.name).join(" ") : "", booru, like, bypassCache)
+        onChange && onChange({
+            tags: tag ? tag.map((v)=> v.name).join(" ") : "",
+            booru,
+            like,
+            bypassCache
+        })
+    }, [tag, booru, like, bypassCache]);
     const boorus = [
         {
             name: "Danbooru",
@@ -330,9 +343,9 @@ const BooruImageInfinite = ({init}: {
     const [wait, setWait] = useState<boolean>(false)
     //const [page, setPage] = useState(2)
     //const [bypassCache, setBypassCache] = useState(false)
-    const [{like, tags, booru, posts, page, bypassCache}, setSettings] = useBooruImageList()
+    const [settings, setSettings] = useBooruImageList()
+    const {like, tags, booru, posts, page, bypassCache} = settings
     useEffect(() => {
-        console.log(like)
         setSettings((s)=> ({
             posts: init.posts
         }))
@@ -363,8 +376,8 @@ const BooruImageInfinite = ({init}: {
         <div style={{
             padding: 16
         }}>
-            <Selector onChange={async (t, b, l, c)=> {
-                if(t==tags&&b==booru&&l==like&&c==bypassCache) return
+            <Selector value={settings} onChange={async (v)=> {
+                if(v.tags==tags&&v.booru==booru&&v.like==like&&v.bypassCache==bypassCache) return
                 //window.scrollTo({ top: 0 })
 
                 /*setSettings((s)=> ({
@@ -377,12 +390,13 @@ const BooruImageInfinite = ({init}: {
                 //setBooru(b)
                 //setLike(l)
                 //setBypassCache(c)
-                const p: Array<any> = await req<any>(`/${l ? "like" : "post"}?page=${1}&booru=${b}&tags=${t}${c?"&bypasscache=true":""}`)
+                const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
+                console.log(v)
                 setSettings((s)=> ({
-                    tags: t,
-                    booru: b,
-                    like: l,
-                    bypassCache: c,
+                    tags: v.tags,
+                    booru: v.booru,
+                    like: v.like,
+                    bypassCache: v.bypassCache,
                     posts: p.filter((p)=> !!getSampleUrl(p)),
                     page: 2
                 }))
