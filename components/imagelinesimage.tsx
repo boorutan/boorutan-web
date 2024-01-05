@@ -1,7 +1,7 @@
 "use client"
 import {BooruImageFromPost} from "@/components/booruImage";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import {useRerender} from "@/hook/useRerender";
 import {req} from "@/lib/fetch";
@@ -23,6 +23,7 @@ export const ImagelinesImage = ({post, booru}:{
     const [progress, setProgress] = useState(0)
     const [[mouseX, mouseY], setMousePosition] = useState<[number, number]>([0, 0])
     const [like, setLike] = useState(true)
+    const query = useSearchParams()
     const pointerSize = progress >= 100 ? 1600 : progress * 10
     useEffect(() => {
         const refresh = setTimeout(()=> {
@@ -66,7 +67,7 @@ export const ImagelinesImage = ({post, booru}:{
                 setLike((v)=> !v)
                 return
             }
-            router.push(`/${post.booru_type || booru}/${post.id}`)
+            router.push(`/${post.booru_type || booru}/${post.id}?id=${query.get("id")}`)
         }}
     >
         <BooruImageFromPost style={{
