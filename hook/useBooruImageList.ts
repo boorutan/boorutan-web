@@ -35,8 +35,9 @@ export const defaultBooruImageList: BooruImageList = {
     sensitiveFilterType: "blur"
 }
 
-type Fn<T, Y = T> = ((value: T)=> Y)
-type V<T> = T
+export type Fn<T, Y = T> = ((value: T)=> Y)
+export type V<T> = T
+export type UpdateBooruSettingsFn =  Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>
 
 export const useBooruImageList = (onLoad?: Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>): [BooruImageList | null, (s: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>)=> void] => {
     const router = useRouter()
