@@ -14,7 +14,9 @@ export type BooruImageList = {
     page: number,
     pageBack: number,
     bypassCache: boolean,
-    query: string
+    query: string,
+    maxSensitiveLevel: number,
+    sensitiveFilterType: "hide" | "blur"
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
 
@@ -28,7 +30,9 @@ export const defaultBooruImageList: BooruImageList = {
     page: 2,
     pageBack: 0,
     bypassCache: false,
-    query: ""
+    query: "",
+    maxSensitiveLevel: 1,
+    sensitiveFilterType: "blur"
 }
 
 type Fn<T, Y = T> = ((value: T)=> Y)
