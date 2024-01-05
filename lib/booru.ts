@@ -41,6 +41,18 @@ const getDescription = (post: any, category: any) => {
     return getCategoryData(post, category, "3", "Original")
 }
 
+const getRating = (post: any): number => {
+    const rating = post.rating.toLowerCase()
+    if(rating == "g") return 0
+    if(rating == "s") return 1
+    if(rating == "q") return 2
+    if(rating == "e") return 3
+    return 4
+}
+const isNSFW = (post: any): boolean => {
+    return getRating(post) > 1
+}
+
 export {
     getSampleUrl,
     getOriginalUrl,
@@ -50,4 +62,6 @@ export {
     getCategoryData,
     createMoeBooruCategory,
     createDanBooruCategory,
+    getRating,
+    isNSFW
 }
