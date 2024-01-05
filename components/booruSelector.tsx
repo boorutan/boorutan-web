@@ -178,6 +178,8 @@ export const Selector = ({init, onChange, value, updateValue}:{
     const [tag, setTag] = createSelectorState(onChange, value, updateValue, "tagsRaw")
     const [booru, setBooru] = createSelectorState(onChange, value, updateValue, "booru")
     const [bypassCache, setBypassCache] = createSelectorState(onChange, value, updateValue, "bypassCache")
+    const [maxSensitiveLevel, setMaxSensitiveLevel] = createSelectorState(onChange, value, updateValue, "maxSensitiveLevel")
+    const [sensitiveFilterType, setSensitiveFilterType] = createSelectorState(onChange, value, updateValue, "sensitiveFilterType")
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             const res: suggest = await req(`/tag/suggest?q=${query}`)
