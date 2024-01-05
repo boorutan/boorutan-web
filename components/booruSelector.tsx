@@ -1,7 +1,8 @@
 import {BooruImageList, BooruImageListOption} from "@/hook/useBooruImageList";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {req} from "@/lib/fetch";
 import {quickSort} from "@/lib/sort";
+import {mergeObjectForce} from "@/lib/utils/object";
 
 type init = {
     tags: any,
@@ -84,6 +85,22 @@ export const Button = ({ children, active, onClick }:{
     </div>
 }
 
+export const ButtonContainer = ({children, style}:{
+    children: React.ReactNode | Array<React.ReactNode>,
+    style?: React.CSSProperties
+}) => {
+    return <div style={mergeObjectForce({
+        display: "flex",
+        gap: 12,
+        padding: 8,
+        border: "1px solid #eee ",
+        width: "fit-content",
+        borderRadius: 100,
+        overflowX: "auto",
+        maxWidth: "calc(100vw - 32px - 16px)"
+    }, style)}>{children}</div>
+}
+
 export const Selector = ({init, onChange, value}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
@@ -130,30 +147,12 @@ export const Selector = ({init, onChange, value}:{
         flexDirection: "column",
         maxWidth: "100vw"
     }}>
-        <div style={{
-            display: "flex",
-            gap: 12,
-            padding: 8,
-            border: "1px solid #eee ",
-            width: "fit-content",
-            borderRadius: 100,
-            overflowX: "auto",
-            maxWidth: "calc(100vw - 32px - 16px)"
-        }}>
+        <ButtonContainer>
             {boorus.map((b, i) => <Button onClick={()=> {
                 setBooru(b.id)
             }} key={i} active={booru==""?!i:booru==b.id}>{b.name}</Button>)}
-        </div>
-        <div style={{
-            display: "flex",
-            gap: 12,
-            padding: 8,
-            border: "1px solid #eee ",
-            borderRadius: 100,
-            overflowX: "auto",
-            maxWidth: "calc(100vw - 32px - 16px)",
-            width: "fit-content"
-        }}>
+        </ButtonContainer>
+        <ButtonContainer>
             <input value={query} onChange={(e)=> {
                 setQuery(e.target.value)
             }} style={{
@@ -190,39 +189,22 @@ export const Selector = ({init, onChange, value}:{
                     return [t].concat(tag)
                 })
             }} active={tag?.map((v)=> v.name).includes(query)}>{query}</Button>}
-        </div>
-        {(tag && !!tag.length) && <div style={{
-            display: "flex",
-            gap: 12,
-            padding: 8,
-            border: "1px solid #eee ",
-            borderRadius: 100,
-            overflowX: "auto",
-            maxWidth: "calc(100vw - 32px - 16px)",
-            width: "fit-content"
-        }}>
+        </ButtonContainer>
+        {(tag && !!tag.length) && <ButtonContainer>
             {tag?.map((b, i) => <Button onClick={()=> {
                 setTag((tag)=> {
                     if(!tag) return null
                     return tag.filter((v)=> v.name != b.name)
                 })
             }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></Button>)}
-        </div>}
+        </ButtonContainer>}
         <div style={{
             display: "flex",
             flexWrap: "wrap",
             gap: 12
         }}>
-            <div style={{
-                display: "flex",
+            <ButtonContainer style={{
                 flexWrap: showMore ? "wrap" : "nowrap",
-                gap: 12,
-                padding: 8,
-                border: "1px solid #eee ",
-                width: "fit-content",
-                borderRadius: 32,
-                overflowX: "auto",
-                maxWidth: "calc(100vw - 32px - 16px)",
                 transition: "all .3s ease"
             }}>
                 {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <Button onClick={()=> {
@@ -242,39 +224,21 @@ export const Selector = ({init, onChange, value}:{
                 {!showMore && <Button onClick={()=> {
                     setShowMore((s)=> !s)
                 }} active>Show more</Button>}
-            </div>
-            <div style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 12,
-                padding: 8,
-                border: "1px solid #eee ",
-                width: "fit-content",
-                borderRadius: 32,
-                overflowX: "auto",
-                maxWidth: "calc(100vw - 32px - 16px)",
+            </ButtonContainer>
+            <ButtonContainer style={{
                 transition: "all .3s ease"
             }}>
                 <Button onClick={()=> {
                     setLike((l)=> !l)
                 }} active={like}>Liked</Button>
-            </div>
+            </ButtonContainer>
         </div>
-        <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12,
-            padding: 8,
-            border: "1px solid #eee ",
-            width: "fit-content",
-            borderRadius: 32,
-            overflowX: "auto",
-            maxWidth: "calc(100vw - 32px - 16px)",
+        <ButtonContainer style={{
             transition: "all .3s ease"
         }}>
             <Button onClick={()=> {
                 setBypassCache((v)=> !v)
             }} active={bypassCache}>BypassCache</Button>
-        </div>
+        </ButtonContainer>
     </div>
 }
