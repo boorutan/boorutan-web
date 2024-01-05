@@ -175,7 +175,16 @@ export const Selector = ({init, onChange, value, updateValue}:{
     const [showMore, setShowMore] = useState(false)
     const [like, setLike] = createSelectorState(onChange, value, updateValue, "like")
     const [query, setQuery] = createSelectorState(onChange, value, updateValue, "query")
-    const [tag, setTag] = createSelectorState(onChange, value, updateValue, "tagsRaw")
+    const [tagString, setTagString] = createSelectorState(onChange, value, updateValue, "tags")
+    const [tag, setTagHandler] = createSelectorState(undefined, value, updateValue, "tagsRaw")
+    const setTag: typeof setTagHandler = (args) => {
+        setTagHandler(args)
+        setTagHandler((tag)=> {
+            const tags = tag || []
+            setTagString(tags.map((tag)=> tag.name).join(" "))
+            return tag
+        })
+    }
     const [booru, setBooru] = createSelectorState(onChange, value, updateValue, "booru")
     const [bypassCache, setBypassCache] = createSelectorState(onChange, value, updateValue, "bypassCache")
     const [maxSensitiveLevel, setMaxSensitiveLevel] = createSelectorState(onChange, value, updateValue, "maxSensitiveLevel")
