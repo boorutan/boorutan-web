@@ -1,9 +1,10 @@
 "use client"
-import { useRouter } from "next/navigation"
+import {useRouter, useSearchParams} from "next/navigation"
 import {useCallback, useState} from "react"
 import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
 import {getDescription, getOriginalUrl, getTitle} from "@/lib/booru";
 import {req} from "@/lib/fetch";
+import {useBooruImageList} from "@/hook/useBooruImageList";
 
 const SelectorButton = ({ children, active, onClick, color }:{
     children: any,
@@ -52,12 +53,13 @@ const ImageModal = ({post, category, notModal, booru}:{
     booru: string,
     notModal?: boolean,
 }) => {
+    const [settings, setSettings] = useBooruImageList()
     const [liked, setLiked] = useState(false)
     const router = useRouter()
+    const query = useSearchParams()
     const back = useCallback(() => {
         !notModal && router.back()
     }, [notModal, router])
-    console.log(post, category);
     return <div id={"modal"} onClick={(e: any)=> {
         if(e.target.nodeName == "DIV") {
             back()
@@ -96,7 +98,27 @@ const ImageModal = ({post, category, notModal, booru}:{
                     borderRadius: 100,
                     flexWrap: "wrap",
                 }}>
-                    {Object.keys(category).map((c, i) => <p style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{c}</p>)}
+                    {Object.keys(category).map((c, i) => <p onClick={()=> {
+                        console.log(category)
+                        const tag = {
+                            name: c,
+                            category: category[c],
+                            post_count: "0"
+                        }
+                        function replaceXwithY(str: string, X: string, Y: string) {
+                            let regex = new RegExp(`(^|\\s)${X}(\\s|$)`, 'g');
+                            return str.replace(regex, Y);
+                        }
+                        setSettings((s)=> ({
+                            tags: `${c} `.concat(replaceXwithY(s.tags, c, "")).trim(),
+                            tagsRaw: [tag].concat((s.tagsRaw || []).filter((t)=> t.name != c))
+                        }))
+                        router.back()
+                        location.reload()
+                        //router.push(`/?id=${query.get("id")}`)
+                        //router.replace(`/?id=${query.get("id")}`)
+
+                    }} style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{c}</p>)}
                 </div>
             </div>
             <BooruImageFromPost  mock style={{
@@ -124,7 +146,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     cursor: "pointer"
                 }}>{getDescription(post, category)}</p>
             </div>
-            <div style={{
+            {/*<div style={{
                 position: "absolute",
                 bottom: 16,
                 right: 32,
@@ -139,7 +161,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     })
                     setLiked(true)
                 }}>Like</p>
-            </div>
+            </div>*/}
         </div>
     </div>
 }
