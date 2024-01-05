@@ -1,4 +1,9 @@
-import {BooruImageList, BooruImageListOption} from "@/hook/useBooruImageList";
+import {
+    BooruImageList,
+    BooruImageListOption,
+    defaultBooruImageList, Fn,
+    UpdateBooruSettingsFn
+} from "@/hook/useBooruImageList";
 import React, {useEffect, useState} from "react";
 import {req} from "@/lib/fetch";
 import {quickSort} from "@/lib/sort";
@@ -146,26 +151,51 @@ const removeTag = (tags: Array<any> | null, tag: any) => {
     return tags?.filter((v)=> v.name != tag.name) || []
 }
 
-export const Selector = ({init, onChange, value}:{
+export const Selector = ({init, onChange, value, updateValue}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
-    value: BooruImageList | null
+    value: BooruImageList | null,
+    updateValue: UpdateBooruSettingsFn
 }) => {
-    const [like, setLike] = useState(value?.like)
-    const [query, setQuery] = useState(value?.query || "")
+    //const [like, setLike] = useState(value?.like)
+    //const [query, setQuery] = useState(value?.query || "")
     const [suggest, setSuggest] = useState<suggest>([])
-    const [tag, setTag] = useState<null | Array<tag>>(value?.tagsRaw || null)
-    const [booru, setBooru] = useState(value?.booru)
-    const [bypassCache, setBypassCache] = useState(value?.bypassCache)
+    //const [tag, setTag] = useState<null | Array<tag>>(value?.tagsRaw || null)
+    //const [booru, setBooru] = useState(value?.booru)
+    //const [bypassCache, setBypassCache] = useState(value?.bypassCache)
     const [showMore, setShowMore] = useState(false)
-    useEffect(() => {
+    /*useEffect(() => {
         setLike(value?.like)
         setBooru(value?.booru)
         setBypassCache(value?.bypassCache)
         setTag(value?.tagsRaw || null)
         setQuery(value?.query || "")
-    }, [value]);
-    useEffect(() => {
+    }, [value]);*/
+
+    const createSelectorState = <K extends keyof BooruImageList>(key: K): [BooruImageList[K], (value: BooruImageList[K] | Fn<BooruImageList[K]>)=> void] => {
+        const v = value || defaultBooruImageList
+        const u = updateValue as any
+        return [v[key], (value: BooruImageList[K] | Fn<BooruImageList[K]>)=> {
+            if(value instanceof  Function) {
+                return u((s: BooruImageList)=> {
+                    const v = {[`${key}`]: value(s[key])}
+                    onChange && onChange(mergeObjectForce(s, v))
+                    return v
+                })
+            }
+            return u((s: BooruImageList)=> {
+                const v = {[`${key}`]: value}
+                onChange && onChange(mergeObjectForce(s, v))
+                return v
+            })
+        }]
+    };
+    const [like, setLike] = createSelectorState("like")
+    const [query, setQuery] = createSelectorState("query")
+    const [tag, setTag] = createSelectorState("tagsRaw")
+    const [booru, setBooru] = createSelectorState("booru")
+    const [bypassCache, setBypassCache] = createSelectorState("bypassCache")
+    /*useEffect(() => {
         if(value == null) return
         onChange && onChange({
             tags: tag ? tag.map((v)=> v.name).join(" ") : "",
@@ -175,7 +205,7 @@ export const Selector = ({init, onChange, value}:{
             tagsRaw: tag,
             query,
         })
-    }, [tag, booru, like, bypassCache]);
+    }, [tag, booru, like, bypassCache])*/
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             const res: suggest = await req(`/tag/suggest?q=${query}`)
