@@ -101,6 +101,36 @@ export const ButtonContainer = ({children, style}:{
     }, style)}>{children}</div>
 }
 
+export const SelectorItemContainer = ({children}:{
+    children: React.ReactNode | Array<React.ReactNode>
+}) => {
+    return <div style={{
+        gap: 12,
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: "100vw"
+    }}>
+        {children}
+    </div>
+}
+
+export const ButtonInput = ({value, onChange}:{
+    value: string,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}) => {
+    return <input value={value} onChange={onChange} style={{
+        height: 44,
+        maxWidth: 500,
+        borderRadius: 100,
+        border: "1px solid #f5f5f5",
+        outline: "none",
+        paddingLeft: 16,
+        fontFamily: "ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace",
+        fontSize: "1em",
+        padding: "2px 32px"
+    }} type="text" />
+}
+
 export const Selector = ({init, onChange, value}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
@@ -141,31 +171,16 @@ export const Selector = ({init, onChange, value}:{
         }, 500)
         return () => clearTimeout(delayDebounceFn)
     }, [query])
-    return <div style={{
-        gap: 12,
-        display: "flex",
-        flexDirection: "column",
-        maxWidth: "100vw"
-    }}>
+    return <SelectorItemContainer>
         <ButtonContainer>
             {boorus.map((b, i) => <Button onClick={()=> {
                 setBooru(b.id)
             }} key={i} active={booru==""?!i:booru==b.id}>{b.name}</Button>)}
         </ButtonContainer>
         <ButtonContainer>
-            <input value={query} onChange={(e)=> {
+            <ButtonInput value={query} onChange={(e)=> {
                 setQuery(e.target.value)
-            }} style={{
-                height: 44,
-                maxWidth: 500,
-                borderRadius: 100,
-                border: "1px solid #f5f5f5",
-                outline: "none",
-                paddingLeft: 16,
-                fontFamily: "ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace",
-                fontSize: "1em",
-                padding: "2px 32px"
-            }} type="text" />
+            }}/>
             {quickSort(suggest, (a, b)=> Number.parseInt(a.post_count) > Number.parseInt((b.post_count))).slice(0, 3).map((b: any, i: any) => <Button onClick={()=> {
                 setTag((tag)=> {
                     if(!tag) return [b]
@@ -198,11 +213,7 @@ export const Selector = ({init, onChange, value}:{
                 })
             }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></Button>)}
         </ButtonContainer>}
-        <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12
-        }}>
+        <SelectorItemContainer>
             <ButtonContainer style={{
                 flexWrap: showMore ? "wrap" : "nowrap",
                 transition: "all .3s ease"
@@ -232,7 +243,7 @@ export const Selector = ({init, onChange, value}:{
                     setLike((l)=> !l)
                 }} active={like}>Liked</Button>
             </ButtonContainer>
-        </div>
+        </SelectorItemContainer>
         <ButtonContainer style={{
             transition: "all .3s ease"
         }}>
@@ -240,5 +251,5 @@ export const Selector = ({init, onChange, value}:{
                 setBypassCache((v)=> !v)
             }} active={bypassCache}>BypassCache</Button>
         </ButtonContainer>
-    </div>
+    </SelectorItemContainer>
 }
