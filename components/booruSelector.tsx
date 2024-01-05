@@ -187,6 +187,7 @@ export const Selector = ({init, onChange, value, updateValue}:{
     }
     const [booru, setBooru] = createSelectorState(onChange, value, updateValue, "booru")
     const [bypassCache, setBypassCache] = createSelectorState(onChange, value, updateValue, "bypassCache")
+    // rating:general とかをtagに追加すればいける
     const [maxSensitiveLevel, setMaxSensitiveLevel] = createSelectorState(onChange, value, updateValue, "maxSensitiveLevel")
     const [sensitiveFilterType, setSensitiveFilterType] = createSelectorState(onChange, value, updateValue, "sensitiveFilterType")
     useEffect(() => {
@@ -241,20 +242,28 @@ export const Selector = ({init, onChange, value, updateValue}:{
                     setShowMore((s)=> !s)
                 }} active>Show more</Button>}
             </ButtonContainer>
-            <ButtonContainer style={{
-                transition: "all .3s ease"
-            }}>
+            <ButtonContainer>
                 <Button onClick={()=> {
                     setLike((l)=> !l)
                 }} active={like}>Liked</Button>
             </ButtonContainer>
         </SelectorItemContainer>
-        <ButtonContainer style={{
-            transition: "all .3s ease"
-        }}>
-            <Button onClick={()=> {
-                setBypassCache((v)=> !v)
-            }} active={bypassCache}>BypassCache</Button>
-        </ButtonContainer>
+        <SelectorItemContainer flex>
+            <ButtonContainer>
+                <Button onClick={()=> {
+                    setBypassCache((v)=> !v)
+                }} active={bypassCache}>BypassCache</Button>
+            </ButtonContainer>
+            <ButtonContainer>
+                <Button>Hide</Button>
+                <Button>Blur</Button>
+            </ButtonContainer>
+            <ButtonContainer>
+                <Button>General</Button>
+                <Button>Sensitive</Button>
+                <Button>Questionable</Button>
+                <Button>Explicit</Button>
+            </ButtonContainer>
+        </SelectorItemContainer>
     </SelectorItemContainer>
 }
