@@ -155,15 +155,10 @@ const createSelectorState = <K extends keyof BooruImageList>(onChange: ((option:
     const v = value || defaultBooruImageList
     const u = updateValue as any
     return [v[key], (value: BooruImageList[K] | Fn<BooruImageList[K]>)=> {
-        if(value instanceof  Function) {
-            return u((s: BooruImageList)=> {
-                const v = {[`${key}`]: value(s[key])}
-                onChange && onChange(mergeObjectForce(s, v))
-                return v
-            })
-        }
         return u((s: BooruImageList)=> {
-            const v = {[`${key}`]: value}
+            const v = {
+                [`${key}`]: value instanceof Function ? value(s[key]) : value
+            }
             onChange && onChange(mergeObjectForce(s, v))
             return v
         })
