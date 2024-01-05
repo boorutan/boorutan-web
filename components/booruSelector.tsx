@@ -101,13 +101,14 @@ export const ButtonContainer = ({children, style}:{
     }, style)}>{children}</div>
 }
 
-export const SelectorItemContainer = ({children}:{
-    children: React.ReactNode | Array<React.ReactNode>
+export const SelectorItemContainer = ({children, flex}:{
+    children: React.ReactNode | Array<React.ReactNode>,
+    flex?: boolean
 }) => {
     return <div style={{
         gap: 12,
         display: "flex",
-        flexDirection: "column",
+        flexDirection: flex ? "row" : "column",
         maxWidth: "100vw"
     }}>
         {children}
@@ -211,7 +212,7 @@ export const Selector = ({init, onChange, value}:{
                 setTag((tag)=> removeTag(tag, b))
             }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></Button>)}
         </ButtonContainer>}
-        <SelectorItemContainer>
+        <SelectorItemContainer flex>
             <ButtonContainer style={{
                 flexWrap: showMore ? "wrap" : "nowrap",
                 transition: "all .3s ease"
