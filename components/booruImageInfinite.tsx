@@ -155,9 +155,7 @@ const BooruImageInfinite = ({init}: {
             padding: 16
         }}>
             <Selector updateValue={setSettings} value={settings} onChange={async (v)=> {
-                if(v.tags==tags&&v.booru==booru&&v.like==like&&v.bypassCache==bypassCache) return
                 const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
-                console.log(v)
                 setSettings((s)=> ({
                     tags: v.tags,
                     booru: v.booru,
