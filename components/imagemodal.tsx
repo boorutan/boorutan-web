@@ -111,7 +111,11 @@ const ImageModal = ({post, category, notModal, booru}:{
                         }
                         setSettings((s)=> ({
                             tags: `${c} `.concat(replaceXwithY(s.tags, c, "")).trim(),
-                            tagsRaw: [tag].concat((s.tagsRaw || []).filter((t)=> t.name != c))
+                            tagsRaw: [tag].concat((s.tagsRaw || []).filter((t)=> t.name != c)),
+                            posts: [],
+                            page: 2,
+                            pageBack: 0,
+                            postsBack: []
                         }))
                         router.back()
                         location.reload()
