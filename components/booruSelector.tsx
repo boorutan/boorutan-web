@@ -131,6 +131,20 @@ export const ButtonInput = ({value, onChange}:{
     }} type="text" />
 }
 
+const toggleTag = (tags: Array<any> | null, tag: any) => {
+    if(removeTag(tags, tag).length != tags?.length) {
+        return removeTag(tags, tag)
+    }
+    return appendTag(tags, tag)
+}
+
+const appendTag = (tags: Array<any> | null, tag: any) => {
+    return [tag].concat(removeTag(tags, tag))
+}
+const removeTag = (tags: Array<any> | null, tag: any) => {
+    return tags?.filter((v)=> v.name != tag.name) || []
+}
+
 export const Selector = ({init, onChange, value}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
@@ -182,35 +196,19 @@ export const Selector = ({init, onChange, value}:{
                 setQuery(e.target.value)
             }}/>
             {quickSort(suggest, (a, b)=> Number.parseInt(a.post_count) > Number.parseInt((b.post_count))).slice(0, 3).map((b: any, i: any) => <Button onClick={()=> {
-                setTag((tag)=> {
-                    if(!tag) return [b]
-                    if(tag.map((v)=> v.name).includes(b.name)) {
-                        return tag.filter((v)=> v.name != b.name)
-                    }
-                    return [b].concat(tag)
-                })
+                setTag((tag)=> toggleTag(tag, b))
             }} key={i} active={tag?.map((v)=> v.name).includes(b.name)}><span style={{color: color[b.category]}}>{b.name}</span> {b.post_count}</Button>)}
             {query && <Button onClick={()=> {
-                setTag((tag)=> {
-                    const t = {
-                        name: query,
-                        category: "5",
-                        post_count: "0"
-                    }
-                    if(!tag) return [t]
-                    if(tag.map((v)=> v.name).includes(t.name)) {
-                        return tag.filter((v)=> v.name != t.name)
-                    }
-                    return [t].concat(tag)
-                })
+                setTag((tag)=> toggleTag(tag, {
+                    name: query,
+                    category: "5",
+                    post_count: "0"
+                }))
             }} active={tag?.map((v)=> v.name).includes(query)}>{query}</Button>}
         </ButtonContainer>
         {(tag && !!tag.length) && <ButtonContainer>
             {tag?.map((b, i) => <Button onClick={()=> {
-                setTag((tag)=> {
-                    if(!tag) return null
-                    return tag.filter((v)=> v.name != b.name)
-                })
+                setTag((tag)=> removeTag(tag, b))
             }} key={i} active={true}><span style={{color: color[b.category]}}>{b.name}</span></Button>)}
         </ButtonContainer>}
         <SelectorItemContainer>
@@ -219,18 +217,11 @@ export const Selector = ({init, onChange, value}:{
                 transition: "all .3s ease"
             }}>
                 {tags.slice(0, showMore ? 30 : 4).map((b: any, i: any) => <Button onClick={()=> {
-                    setTag((tag)=> {
-                        const t = {
-                            name: b.name,
-                            category: "5",
-                            post_count: "0"
-                        }
-                        if(!tag) return [t]
-                        if(tag.map((v)=> v.name).includes(t.name)) {
-                            return tag.filter((v)=> v.name != t.name)
-                        }
-                        return [t].concat(tag)
-                    })
+                    setTag((tag)=> toggleTag(tag, {
+                        name: b.name,
+                        category: "5",
+                        post_count: "0"
+                    }))
                 }} key={i} active={tag?.map((v)=> v.name).includes(query)}>{b.name}</Button>)}
                 {!showMore && <Button onClick={()=> {
                     setShowMore((s)=> !s)
