@@ -12,6 +12,7 @@ import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
 import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruImageList} from "@/hook/useBooruImageList";
 import {Selector} from "@/components/booruSelector";
+import {getPost} from "@/lib/booruPost";
 
 type init = {
     tags: any,
@@ -90,7 +91,11 @@ const BooruImageInfinite = ({init}: {
     const [isShowHistory, setIsShowHistory] = useState(false)
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const basePage = s.page - s.pageBack
-        const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        //const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        const posts = await getPost({
+            ...s,
+            page: basePage - 1
+        })
         if(basePage <= 2) {
             setIsShowHistory(false)
             return {
@@ -101,7 +106,11 @@ const BooruImageInfinite = ({init}: {
             }
         }
         setIsShowHistory(true)
-        const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        //const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
+        const postsBack = await getPost({
+            ...s,
+            page: basePage - 2
+        })
         const interval = setInterval(()=> {
             scrollSelector()
             clearInterval(interval)
@@ -138,7 +147,11 @@ const BooruImageInfinite = ({init}: {
                     }
                     if(like)
                         return setWait(true)
-                    const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page - pageBack - 3}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                    //const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page - pageBack - 3}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                    const posts = await getPost({
+                        ...settings,
+                        page: page - pageBack - 3
+                    })
                     setSettings((s)=> ({
                         postsBack: s.postsBack.concat(posts.filter((p)=> !!getSampleUrl(p)).reverse()),
                         pageBack: s.pageBack + 1
@@ -155,7 +168,11 @@ const BooruImageInfinite = ({init}: {
             padding: 16
         }}>
             <Selector updateValue={setSettings} value={settings} onChange={async (v)=> {
-                const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
+                //const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
+                const p = await getPost({
+                    ...v,
+                    page: 1
+                })
                 setSettings((s)=> ({
                     tags: v.tags,
                     booru: v.booru,
@@ -182,7 +199,10 @@ const BooruImageInfinite = ({init}: {
             loadMore={async (id)=> {
                 if(like)
                     return setWait(true)
-                const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                //const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
+                const posts = await getPost({
+                    ...settings
+                })
                 setSettings((s)=> ({
                     posts: s.posts.concat(posts.filter((p)=> !!getSampleUrl(p))),
                     page: s.page + 1
