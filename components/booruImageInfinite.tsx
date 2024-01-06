@@ -161,7 +161,7 @@ const BooruImageInfinite = ({init}: {
                 initialLoad={false}
                 isReverse={true}
             >
-                <ImageLines isReverse={true} booru={booru || "danbooru"} posts={postsBack} line_length={3} />
+                <ImageLines showSensitiveLevel={settings?.showSensitiveLevel} isReverse={true} booru={booru || "danbooru"} posts={postsBack} line_length={3} />
             </InfiniteScroll>
         </div>}
         <div ref={ref} style={{
@@ -211,7 +211,7 @@ const BooruImageInfinite = ({init}: {
             }}
             initialLoad={false}
         >
-            <ImageLines booru={booru || "danbooru"} posts={posts} line_length={3} />
+            <ImageLines showSensitiveLevel={settings?.showSensitiveLevel} booru={booru || "danbooru"} posts={posts} line_length={3} />
         </InfiniteScroll>
     </div>
 }

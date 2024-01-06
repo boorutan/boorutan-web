@@ -5,6 +5,8 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import {useRerender} from "@/hook/useRerender";
 import {req} from "@/lib/fetch";
+import {isNeedBlur} from "@/lib/booru";
+import {useBooruImageList} from "@/hook/useBooruImageList";
 
 const getSize = (post: any): [number, number] => {
     if( post.width )
@@ -12,9 +14,10 @@ const getSize = (post: any): [number, number] => {
     return [post.image_width, post.image_height]
 }
 
-export const ImagelinesImage = ({post, booru}:{
+export const ImagelinesImage = ({post, booru, showSensitiveLevel}:{
     post: any,
-    booru: string
+    booru: string,
+    showSensitiveLevel?: Array<number>
 }) => {
     const update = useRerender()
     const router = useRouter()
@@ -54,7 +57,8 @@ export const ImagelinesImage = ({post, booru}:{
             width: "calc(100% - 10px)",
             aspectRatio: `${getSize(post)[0]} / ${getSize(post)[1]}`,
             overflow: "hidden",
-            position: "relative"
+            position: "relative",
+            borderRadius: 40,
         }}
         onClick={async ()=> {
             if(progress >= 100) {
@@ -76,8 +80,20 @@ export const ImagelinesImage = ({post, booru}:{
             backgroundColor: "#eee",
             borderRadius: 40,
             pointerEvents: "none",
+            //filter: "blur(3px)"
             //outline: `${progress / 10}px solid #FCE4EC`
         }} post={post} />
+        {isNeedBlur(showSensitiveLevel || [], post) && <div style={{
+            position: "absolute",
+            width: 1920,
+            height: 1080,
+            backdropFilter: `blur(30px)`,
+            zIndex: 100,
+            //borderRadius: "100%",
+            pointerEvents: "none",
+            top: 0,
+            left: 0
+        }} />}
         {isMouseHover && <div style={{
             position: "absolute",
             width: pointerSize,
