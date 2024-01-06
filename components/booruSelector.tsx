@@ -279,6 +279,7 @@ export const Selector = ({init, onChange, value, updateValue}:{
     const [bypassCache, setBypassCache] = createSelectorState(onChange, value, updateValue, "bypassCache")
     // rating:general とかをtagに追加すればいける
     const [maxSensitiveLevel, setMaxSensitiveLevel] = createSelectorState(onChange, value, updateValue, "maxSensitiveLevel")
+    const [showSensitiveLevel, setShowSensitiveLevel] = createSelectorState(onChange, value, updateValue, "showSensitiveLevel")
     const [sensitiveFilterType, setSensitiveFilterType] = createSelectorState(onChange, value, updateValue, "sensitiveFilterType")
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
@@ -358,7 +359,7 @@ export const Selector = ({init, onChange, value, updateValue}:{
                 <Button>Questionable</Button>
                 <Button>Explicit</Button>
             </ButtonContainer>*/}
-            <ButtonSelector value={maxSensitiveLevel} onChange={(e)=> setMaxSensitiveLevel(e)} items={[
+            <ButtonMultipleSelector value={showSensitiveLevel} onChange={(e)=> setShowSensitiveLevel(quickSort(e))} items={[
                 {label: "General", value: 0},
                 { label: "Sensitive", value: 1},
                 { label: "Questionable", value: 2},
