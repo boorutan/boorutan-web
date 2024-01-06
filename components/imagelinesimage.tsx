@@ -88,7 +88,6 @@ export const ImagelinesImage = ({post, booru, showSensitiveLevel}:{
             width: 1920,
             height: 1080,
             backdropFilter: `blur(30px)`,
-            zIndex: 100,
             //borderRadius: "100%",
             pointerEvents: "none",
             top: 0,
