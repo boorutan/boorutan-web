@@ -50,6 +50,10 @@ const getRating = (post: any): number => {
     return 4
 }
 
+const isNeedBlur = (sensitiveLevel: Array<number>, post: any) => {
+    return !sensitiveLevel.includes(getRating(post))
+}
+
 const getRatingTag = (sensitiveLevel: Array<number>) => {
     if(!sensitiveLevel.length)
         return ""
@@ -71,5 +75,6 @@ export {
     createDanBooruCategory,
     getRating,
     isNSFW,
-    getRatingTag
+    getRatingTag,
+    isNeedBlur
 }
