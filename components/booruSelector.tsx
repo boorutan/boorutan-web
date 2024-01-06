@@ -312,16 +312,26 @@ export const Selector = ({init, onChange, value, updateValue}:{
                     setBypassCache((v)=> !v)
                 }} active={bypassCache}>BypassCache</Button>
             </ButtonContainer>
-            <ButtonContainer>
+            {/*<ButtonContainer>
                 <Button>Hide</Button>
                 <Button>Blur</Button>
-            </ButtonContainer>
-            <ButtonContainer>
+            </ButtonContainer>*/}
+            <ButtonSelector value={sensitiveFilterType} onChange={(e: any)=> setSensitiveFilterType(e)} items={[
+                { label: "Hide", value: "hide"},
+                { label: "Blur", value: "blur"}
+            ]}/>
+            {/*<ButtonContainer>
                 <Button>General</Button>
                 <Button>Sensitive</Button>
                 <Button>Questionable</Button>
                 <Button>Explicit</Button>
-            </ButtonContainer>
+            </ButtonContainer>*/}
+            <ButtonSelector value={maxSensitiveLevel} onChange={(e)=> setMaxSensitiveLevel(e)} items={[
+                {label: "General", value: 0},
+                { label: "Sensitive", value: 1},
+                { label: "Questionable", value: 2},
+                { label: "Explicit", value: 3}
+            ]} />
         </SelectorItemContainer>
     </SelectorItemContainer>
 }
