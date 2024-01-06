@@ -16,6 +16,7 @@ export type BooruImageList = {
     bypassCache: boolean,
     query: string,
     maxSensitiveLevel: number,
+    showSensitiveLevel: Array<number>,
     sensitiveFilterType: "hide" | "blur"
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
@@ -32,6 +33,7 @@ export const defaultBooruImageList: BooruImageList = {
     bypassCache: false,
     query: "",
     maxSensitiveLevel: 1,
+    showSensitiveLevel: [],
     sensitiveFilterType: "blur"
 }
 
