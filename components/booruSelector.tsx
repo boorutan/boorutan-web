@@ -4,7 +4,7 @@ import {
     defaultBooruImageList, Fn,
     UpdateBooruSettingsFn
 } from "@/hook/useBooruImageList";
-import React, {useEffect, useState} from "react";
+import React, {ComponentProps, forwardRef, useEffect, useRef, useState} from "react";
 import {req} from "@/lib/fetch";
 import {quickSort} from "@/lib/sort";
 import {mergeObjectForce} from "@/lib/utils/object";
@@ -68,12 +68,13 @@ const tags = [
     { name: "cirno" }
 ]
 
-export const Button = ({ children, active, onClick }:{
+export const Button = forwardRef(function Button ({ children, active, onClick, style, ...other }:{
     children: any,
     active?: boolean,
-    onClick?: (e: any) => void
-}) => {
-    return <div onClick={(e)=> onClick && onClick(e)} style={{
+    onClick?: (e: any) => void,
+    style?: React.CSSProperties,
+} & ComponentProps<"div">, ref: any) {
+    return <div {...other} ref={ref} onClick={(e)=> onClick && onClick(e)} style={mergeObjectForce({
         padding: "16px 32px",
         border: "1px solid #eee",
         width: "fit-content",
@@ -81,13 +82,16 @@ export const Button = ({ children, active, onClick }:{
         backgroundColor: active ? "#f5f5f5" : "#fff",
         cursor: "pointer",
         whiteSpace: "nowrap"
-    }}>
+    }, style)}>
         <p style={{
             margin: 0,
             width: "fit-content",
-            lineHeight: 1
+            lineHeight: 1,
+            pointerEvents: "none"
         }}>{ children }</p>
     </div>
+})
+
 }
 
 export const ButtonContainer = ({children, style}:{
