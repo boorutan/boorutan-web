@@ -162,16 +162,18 @@ export const ButtonContainer = ({children, style}:{
     }, style)}>{children}</div>
 }
 
-export const SelectorItemContainer = ({children, flex}:{
+export const SelectorItemContainer = ({children, flex, style}:{
     children: React.ReactNode | Array<React.ReactNode>,
-    flex?: boolean
+    flex?: boolean,
+    style?: React.CSSProperties
 }) => {
-    return <div style={{
+    return <div style={mergeObjectForce({
         gap: 12,
         display: "flex",
         flexDirection: flex ? "row" : "column",
-        maxWidth: "100vw"
-    }}>
+        maxWidth: "100vw",
+        flexWrap: "wrap"
+    }, style)}>
         {children}
     </div>
 }
