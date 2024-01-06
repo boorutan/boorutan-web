@@ -49,6 +49,13 @@ const getRating = (post: any): number => {
     if(rating == "e") return 3
     return 4
 }
+
+const getRatingTag = (sensitiveLevel: Array<number>) => {
+    if(!sensitiveLevel.length)
+        return ""
+    return " rating:".concat(sensitiveLevel.map((v)=> ["general", "sensitive", "questionable", "explicit"][v]).join(","))
+}
+
 const isNSFW = (post: any): boolean => {
     return getRating(post) > 1
 }
@@ -63,5 +70,6 @@ export {
     createMoeBooruCategory,
     createDanBooruCategory,
     getRating,
-    isNSFW
+    isNSFW,
+    getRatingTag
 }
