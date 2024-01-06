@@ -92,6 +92,58 @@ export const Button = forwardRef(function Button ({ children, active, onClick, s
     </div>
 })
 
+export const ButtonSelector = <T = any>({items, onChange, value}:{
+    items: Array<{
+        label: string,
+        value: T
+    } | T>,
+    onChange?: (value: T) => void,
+    value?: T
+}) => {
+    const firstButtonRef = useRef(null)
+    const [width, setWidth] = useState(0)
+    const [height, setHeight] = useState(0)
+    const [left, setLeft] = useState(0)
+    const toValue = (item: { label: string, value: T } | T): {label: string | T, value: T} => {
+        if(item instanceof  Object) {
+            return item
+        }
+        return ({label: item, value: items}) as any
+    }
+    const updateState = (e: any) => {
+        setWidth(e.offsetWidth)
+        setHeight(e.offsetHeight)
+        setLeft(e.offsetLeft)
+    }
+    const defaultValueNum = items.reduce((acc, v, i)=> acc || ( toValue(v).value == value ? i : 0 ) , 0 )
+    useEffect(()=> {
+        updateState(firstButtonRef.current)
+    },[])
+    return <ButtonContainer style={{
+        position: "relative"
+    }}>
+        {items.map((v, i)=> <Button
+            key={i}
+            style={{
+                border: "none",
+                backgroundColor: toValue(v).value == value ? "#f5f5f5" :  "transparent",
+                transition: "all .3s ease"
+            }}
+            ref={i==defaultValueNum? firstButtonRef : undefined}
+            onMouseEnter={(e)=> updateState(e.target)}
+            onClick={()=> onChange && onChange(toValue(v).value)}
+        >{toValue(v).label}</Button>)}
+        <div style={{
+            position: "absolute",
+            width: width - 2,
+            height,
+            transform: `translateX(${left - 8}px) translateY(-1px)`,
+            borderRadius: 100,
+            border: "1px solid #eee",
+            transition: "all .3s ease",
+            pointerEvents: "none"
+        }} />
+    </ButtonContainer>
 }
 
 export const ButtonContainer = ({children, style}:{
