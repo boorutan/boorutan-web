@@ -92,24 +92,56 @@ export const Button = forwardRef(function Button ({ children, active, onClick, s
     </div>
 })
 
-export const ButtonSelector = <T = any>({items, onChange, value}:{
+type ButtonSelectorBaseProps<T> = {
     items: Array<{
         label: string,
         value: T
     } | T>,
     onChange?: (value: T) => void,
     value?: T
+}
+
+
+const toValue = <T = any>(item: { label: string, value: T } | T): {label: string | T, value: T} => {
+    if(item instanceof  Object) {
+        return item
+    }
+    return ({label: item, value: item}) as any
+}
+
+export const ButtonMultipleSelector = <T = any>({items, onChange, value}: {
+    items: Array<{
+        label: string,
+        value: T
+    } | T>,
+    value: Array<T>,
+    onChange: (value: Array<T>) => void
 }) => {
+    return <ButtonContainer>
+        {items.map((v, i)=> <Button
+            key={i}
+            /*style={{
+                backgroundColor: value.includes(toValue(v).value) ? "#f5f5f5" :  "transparent",
+                transition: "all .3s ease"
+            }}*/
+            active={value.includes(toValue(v).value)}
+            onClick={()=> {
+                if(!onChange) return
+                const val = toValue(v).value
+                if(value.includes(val)) {
+                    return onChange(value.filter((v)=> v != val))
+                }
+                return onChange(value.concat(val))
+            }}
+        >{toValue(v).label}</Button>)}
+    </ButtonContainer>
+}
+
+export const ButtonSelector = <T = any>({items, onChange, value}: ButtonSelectorBaseProps<T>) => {
     const firstButtonRef = useRef(null)
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
     const [left, setLeft] = useState(0)
-    const toValue = (item: { label: string, value: T } | T): {label: string | T, value: T} => {
-        if(item instanceof  Object) {
-            return item
-        }
-        return ({label: item, value: items}) as any
-    }
     const updateState = (e: any) => {
         setWidth(e.offsetWidth)
         setHeight(e.offsetHeight)
