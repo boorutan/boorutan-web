@@ -41,13 +41,15 @@ export type Fn<T, Y = T> = ((value: T)=> Y)
 export type V<T> = T
 export type UpdateBooruSettingsFn =  Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>
 
-export const useBooruImageList = (onLoad?: Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>): [BooruImageList | null, (s: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>)=> void] => {
+export const useBooruImageList = (onLoad?: Fn<BooruImageList, BooruImageListOption | Promise<BooruImageListOption> | void>, option?: {
+    replaceId: boolean
+}): [BooruImageList | null, (s: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>)=> void] => {
     const router = useRouter()
     const query = useSearchParams()
     const [load, setLoad] = useState(false)
     const id = query.get("id") || crypto.randomUUID().slice(0, 5)
     const [settings, setSettings] = useLocalStorage<BooruImageList>(id , defaultBooruImageList, null)
-    if(!query.get(id) && !settings) {
+    if(!query.get(id) && !settings && option?.replaceId !== false) {
         router.replace(`/?id=${id}`)
     }
     const updateSettings = (settings: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>) => {

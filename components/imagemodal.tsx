@@ -53,7 +53,9 @@ const ImageModal = ({post, category, notModal, booru}:{
     booru: string,
     notModal?: boolean,
 }) => {
-    const [settings, setSettings] = useBooruImageList()
+    const [settings, setSettings] = useBooruImageList(()=>{}, {
+        replaceId: false
+    })
     const [liked, setLiked] = useState(false)
     const router = useRouter()
     const query = useSearchParams()
