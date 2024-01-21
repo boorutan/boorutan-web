@@ -1,4 +1,5 @@
 import baseurl, {ssrurl} from "@/lib/url";
+import {mergeObjectForce} from "@/lib/utils/object";
 
 export const req = async < T > (url : string, option? : {
     isResultArray?: boolean,
@@ -7,10 +8,11 @@ export const req = async < T > (url : string, option? : {
     ContentType?: string,
     method? : "GET" | "POST" | "DELETE",
     body? : object | void | null | any,
+    header?: {[key: string]: string}
 }) : Promise < T > => {
     console.log(`${baseurl}${url}`)
     const _res = await fetch(`${option?.isSSR ? ssrurl : baseurl}${url}`, {
-        "headers": {
+        "headers": mergeObjectForce({
             "accept": "application/json, text/plain, */*",
             "accept-language": "ja,en-US;q=0.9,en;q=0.8,ja-JP;q=0.7",
             "sec-ch-ua": "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"",
@@ -20,7 +22,7 @@ export const req = async < T > (url : string, option? : {
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-site",
             "Content-type": option ?. ContentType || (option ?. isJSON === false ? "application/json" : "application/json")
-        },
+        }, option?.header),
         "referrerPolicy": "strict-origin-when-cross-origin",
         "body": option?.body ? option ?. isJSON === false ? option?.body : JSON.stringify(option?.body) : null,
         "method": option?.method || "GET",
