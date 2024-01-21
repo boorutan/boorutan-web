@@ -85,8 +85,8 @@ export const ImagelinesImage = ({post, booru, showSensitiveLevel}:{
         }} post={post} />
         {isNeedBlur(showSensitiveLevel || [], post) && <div style={{
             position: "absolute",
-            width: 1920,
-            height: 1080,
+            width: "100%",
+            height: "100%",
             backdropFilter: `blur(30px)`,
             //borderRadius: "100%",
             pointerEvents: "none",
