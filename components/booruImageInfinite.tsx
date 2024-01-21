@@ -13,6 +13,7 @@ import {quickSort} from "@/lib/sort";
 import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruImageList} from "@/hook/useBooruImageList";
 import {Selector} from "@/components/booruSelector";
 import {getPost} from "@/lib/booruPost";
+import {useAccount} from "@/hook/useAccount";
 
 type init = {
     tags: any,
@@ -89,10 +90,11 @@ const BooruImageInfinite = ({init}: {
 
     const [wait, setWait] = useState<boolean>(false)
     const [isShowHistory, setIsShowHistory] = useState(false)
+    const [account] = useAccount()
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const basePage = s.page - s.pageBack
         //const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
-        const posts = await getPost({
+        const posts = await getPost(account, {
             ...s,
             page: basePage - 1
         })
@@ -107,7 +109,7 @@ const BooruImageInfinite = ({init}: {
         }
         setIsShowHistory(true)
         //const postsBack: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 2}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
-        const postsBack = await getPost({
+        const postsBack = await getPost(account, {
             ...s,
             page: basePage - 2
         })
@@ -148,7 +150,7 @@ const BooruImageInfinite = ({init}: {
                     if(like)
                         return setWait(true)
                     //const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page - pageBack - 3}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
-                    const posts = await getPost({
+                    const posts = await getPost(account, {
                         ...settings,
                         page: page - pageBack - 3
                     })
@@ -161,7 +163,7 @@ const BooruImageInfinite = ({init}: {
                 initialLoad={false}
                 isReverse={true}
             >
-                <ImageLines showSensitiveLevel={settings?.showSensitiveLevel} isReverse={true} booru={booru || "danbooru"} posts={postsBack} line_length={3} />
+                <ImageLines account={account} showSensitiveLevel={settings?.showSensitiveLevel} isReverse={true} booru={booru || "danbooru"} posts={postsBack} line_length={3} />
             </InfiniteScroll>
         </div>}
         <div ref={ref} style={{
@@ -169,7 +171,7 @@ const BooruImageInfinite = ({init}: {
         }}>
             <Selector updateValue={setSettings} value={settings} onChange={async (v)=> {
                 //const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
-                const p = await getPost({
+                const p = await getPost(account, {
                     ...v,
                     page: 1
                 })
@@ -200,7 +202,7 @@ const BooruImageInfinite = ({init}: {
                 if(like)
                     return setWait(true)
                 //const posts: Array<any> = await req<any>(`/${like ? "like" : "post"}?page=${page}&booru=${booru}&tags=${tags}${bypassCache?"&bypasscache=true":""}`)
-                const posts = await getPost({
+                const posts = await getPost(account, {
                     ...settings
                 })
                 setSettings((s)=> ({
@@ -211,7 +213,7 @@ const BooruImageInfinite = ({init}: {
             }}
             initialLoad={false}
         >
-            <ImageLines showSensitiveLevel={settings?.showSensitiveLevel} booru={booru || "danbooru"} posts={posts} line_length={3} />
+            <ImageLines account={account} showSensitiveLevel={settings?.showSensitiveLevel} booru={booru || "danbooru"} posts={posts} line_length={3} />
         </InfiniteScroll>
     </div>
 }

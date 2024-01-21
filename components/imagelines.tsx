@@ -4,6 +4,7 @@ import BooruImage, { BooruImageFromPost } from "./booruImage"
 import useWindowSize from "@/hook/useWindowSize"
 import Link from "next/link"
 import {ImagelinesImage} from "@/components/imagelinesimage";
+import {Account} from "@/hook/useAccount";
 
 const getAspect = (width: number, height: number) => height / width
 const getSize = (post: any): [number, number] => {
@@ -23,12 +24,13 @@ const createLines = (posts: Array<any>, line_length: number) => {
     return arr
 }
 
-const ImageLines = ({posts, line_length, booru, isReverse = false, showSensitiveLevel}:{
+const ImageLines = ({posts, line_length, booru, isReverse = false, showSensitiveLevel, account}:{
     posts: Array<any>,
     line_length: number,
     booru: string,
     isReverse?: boolean,
-    showSensitiveLevel?: Array<number>
+    showSensitiveLevel?: Array<number>,
+    account: Account | null
 }) => {
     const [lines, setLines] = useState<Array<Array<any>>>(new Array(line_length).fill(0).map(()=> []))
     const [width, height] = useWindowSize()
@@ -40,7 +42,7 @@ const ImageLines = ({posts, line_length, booru, isReverse = false, showSensitive
             <div key={i} style={{ width: `calc(100% / ${Math.round(width / 500) || 3})`, marginBottom: '25px', display: "flex", flexDirection: isReverse ? "column-reverse" : "column" }}>
                 {arr.map((p: any) => (
                     <div key={p.file_url} style={{ width: "calc(100% - 10px)", marginRight: "5px", marginLeft: "5px", marginBottom: "10px" }}>
-                        <ImagelinesImage showSensitiveLevel={showSensitiveLevel} post={p} booru={booru} />
+                        <ImagelinesImage account={account} showSensitiveLevel={showSensitiveLevel} post={p} booru={booru} />
                     </div>
                 ))}
             </div>

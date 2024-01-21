@@ -7,6 +7,7 @@ import {useRerender} from "@/hook/useRerender";
 import {req} from "@/lib/fetch";
 import {isNeedBlur} from "@/lib/booru";
 import {useBooruImageList} from "@/hook/useBooruImageList";
+import {Account} from "@/hook/useAccount";
 
 const getSize = (post: any): [number, number] => {
     if( post.width )
@@ -14,10 +15,11 @@ const getSize = (post: any): [number, number] => {
     return [post.image_width, post.image_height]
 }
 
-export const ImagelinesImage = ({post, booru, showSensitiveLevel}:{
+export const ImagelinesImage = ({post, booru, showSensitiveLevel, account}:{
     post: any,
     booru: string,
-    showSensitiveLevel?: Array<number>
+    showSensitiveLevel?: Array<number>,
+    account: Account | null
 }) => {
     const update = useRerender()
     const router = useRouter()
@@ -66,6 +68,9 @@ export const ImagelinesImage = ({post, booru, showSensitiveLevel}:{
                     method: "POST",
                     body: {
                         like,
+                    },
+                    header: {
+                        Account: account?.id || "anonymous"
                     }
                 })
                 setLike((v)=> !v)
