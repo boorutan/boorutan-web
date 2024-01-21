@@ -3,11 +3,14 @@ import { useEffect, useState } from "react"
 type Fn<T> = ((value: T)=> T)
 type V<T> = T
 
-export const useLocalStorage = <T>(key: string, init?: T, loading?: any): [T, (value: Fn<T> | V<T>)=> void] => {
+export const useLocalStorage = <T>(key: string, init?: T | ((value: T | null) => T), loading?: any): [T, (value: Fn<T> | V<T>)=> void] => {
     const [state, setState] = useState<T>(loading === undefined ? init : loading)
     useEffect(()=> {
         setState(()=> {
             const value = localStorage.getItem(key)
+            if(init instanceof Function) {
+                return init(value ? JSON.parse(value) : null)
+            }
             return value ? JSON.parse(value) : init
         })
     },[])
