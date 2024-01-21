@@ -264,7 +264,7 @@ export const Selector = ({init, onChange, value, updateValue}:{
     const [suggest, setSuggest] = useState<suggest>([])
     const [showMore, setShowMore] = useState(false)
     const [like, setLike] = createSelectorState(onChange, value, updateValue, "like")
-    const [query, setQuery] = createSelectorState(onChange, value, updateValue, "query")
+    const [query, setQuery] = createSelectorState(()=> {}, value, updateValue, "query")
     const [tagString, setTagString] = createSelectorState(onChange, value, updateValue, "tags")
     const [tag, setTagHandler] = createSelectorState(undefined, value, updateValue, "tagsRaw")
     const setTag: typeof setTagHandler = (args) => {
