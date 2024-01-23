@@ -8,6 +8,7 @@ import React, {ComponentProps, forwardRef, useEffect, useRef, useState} from "re
 import {req} from "@/lib/fetch";
 import {quickSort} from "@/lib/sort";
 import {mergeObjectForce} from "@/lib/utils/object";
+import {Account} from "@/hook/useAccount";
 
 type init = {
     tags: any,
@@ -255,11 +256,13 @@ const createSelectorState = <K extends keyof BooruImageList>(onChange: ((option:
     }]
 };
 
-export const Selector = ({init, onChange, value, updateValue}:{
+export const Selector = ({init, onChange, value, updateValue, account, setAccount}:{
     init: init,
     onChange?: (option: BooruImageListOption) => void,
     value: BooruImageList | null,
-    updateValue: UpdateBooruSettingsFn
+    updateValue: UpdateBooruSettingsFn,
+    account: Account | null,
+    setAccount: (account: Account) => void
 }) => {
     const [suggest, setSuggest] = useState<suggest>([])
     const [showMore, setShowMore] = useState(false)
@@ -334,6 +337,9 @@ export const Selector = ({init, onChange, value, updateValue}:{
                 }} active>Show more</Button>}
             </ButtonContainer>
             <ButtonContainer>
+                <ButtonInput value={account?.id || ""} onChange={(e)=> {
+                    setAccount({id: e.target.value})
+                }}/>
                 <Button onClick={()=> {
                     setLike((l)=> !l)
                 }} active={like}>Liked</Button>

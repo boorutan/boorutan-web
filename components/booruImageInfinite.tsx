@@ -90,7 +90,7 @@ const BooruImageInfinite = ({init}: {
 
     const [wait, setWait] = useState<boolean>(false)
     const [isShowHistory, setIsShowHistory] = useState(false)
-    const [account] = useAccount()
+    const [account, setAccount] = useAccount()
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const basePage = s.page - s.pageBack
         //const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
@@ -169,7 +169,7 @@ const BooruImageInfinite = ({init}: {
         <div ref={ref} style={{
             padding: 16
         }}>
-            <Selector updateValue={setSettings} value={settings} onChange={async (v)=> {
+            <Selector account={account} setAccount={setAccount} updateValue={setSettings} value={settings} onChange={async (v)=> {
                 //const p: Array<any> = await req<any>(`/${v.like ? "like" : "post"}?page=${1}&booru=${v.booru}&tags=${v.tags}${v.bypassCache?"&bypasscache=true":""}`)
                 const p = await getPost(account, {
                     ...v,
