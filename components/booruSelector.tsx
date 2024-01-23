@@ -292,7 +292,17 @@ export const Selector = ({init, onChange, value, updateValue, account, setAccoun
             const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
             setSuggest(sorted)
         }, 500)
-        return () => clearTimeout(delayDebounceFn)
+        const delayDebounceFnFast = setTimeout(async () => {
+            const res: suggest = await req(`/tag/suggest/fast?q=${query}`)
+            if(!Array.isArray(res))
+                return
+            const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
+            setSuggest(sorted)
+        }, 50)
+        return () => {
+            clearTimeout(delayDebounceFn)
+            clearTimeout(delayDebounceFnFast)
+        }
     }, [query])
     return <SelectorItemContainer>
         <ButtonContainer>
