@@ -33,7 +33,7 @@ export const defaultBooruImageList: BooruImageList = {
     bypassCache: false,
     query: "",
     maxSensitiveLevel: 1,
-    showSensitiveLevel: [],
+    showSensitiveLevel: [0, 1],
     sensitiveFilterType: "blur"
 }
 
