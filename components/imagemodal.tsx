@@ -5,6 +5,7 @@ import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
 import {getDescription, getOriginalUrl, getTitle} from "@/lib/booru";
 import {req} from "@/lib/fetch";
 import {useBooruImageList} from "@/hook/useBooruImageList";
+import {useEffectApi} from "@/hook/useApi";
 
 const SelectorButton = ({ children, active, onClick, color }:{
     children: any,
@@ -47,6 +48,15 @@ const color: any = {
     "5": "#FFEB3B", // meta
 }
 
+const translateTag = async (tags: Array<string>): Promise<Array<string>> => {
+    return (await req<Array<string>>("/tag/translate", {
+        method: "POST",
+        body: {
+            tags
+        }
+    }))
+}
+
 const ImageModal = ({post, category, notModal, booru}:{
     post: any,
     category: any,
@@ -56,12 +66,23 @@ const ImageModal = ({post, category, notModal, booru}:{
     const [settings, setSettings] = useBooruImageList(()=>{}, {
         replaceId: false
     })
+    const [translate, setTranslate] = useState<{[key: string]: string}>({})
     const [liked, setLiked] = useState(false)
     const router = useRouter()
     const query = useSearchParams()
     const back = useCallback(() => {
         !notModal && router.back()
     }, [notModal, router])
+    useEffectApi(async ()=> {
+        const tags = await translateTag(Object.keys(category))
+        console.log(tags)
+        const obj = Object.keys(category).reduce((acc: any, v, i)=> {
+            acc[v] = tags[i]
+            return acc
+        },{})
+        console.log(obj)
+        setTranslate(obj)
+    },[])
     return <div id={"modal"} onClick={(e: any)=> {
         if(e.target.nodeName == "DIV") {
             back()
@@ -119,12 +140,15 @@ const ImageModal = ({post, category, notModal, booru}:{
                             pageBack: 0,
                             postsBack: []
                         }))
-                        router.back()
-                        location.reload()
+                        router.push(`/?id=${query.get("id")}`)
+                        const interval = setInterval(()=> {
+                            location.reload()
+                            clearInterval(interval)
+                        }, 100)
                         //router.push(`/?id=${query.get("id")}`)
                         //router.replace(`/?id=${query.get("id")}`)
 
-                    }} style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{c}</p>)}
+                    }} style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{translate[c] || c}</p>)}
                 </div>
             </div>
             <BooruImageFromPost  mock style={{
