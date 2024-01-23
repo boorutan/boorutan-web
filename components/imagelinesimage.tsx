@@ -64,7 +64,7 @@ export const ImagelinesImage = ({post, booru, showSensitiveLevel, account}:{
         }}
         onClick={async ()=> {
             if(progress >= 100) {
-                const res = await req(`/like/${post.booru_type || booru}/${post.id}`, {
+                const res = await req(`/account/like/${post.booru_type || booru}/${post.id}`, {
                     method: "POST",
                     body: {
                         like,
