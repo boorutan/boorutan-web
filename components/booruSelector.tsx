@@ -287,7 +287,7 @@ export const Selector = ({init, onChange, value, updateValue, account, setAccoun
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             const res: suggest = await req(`/tag/suggest?q=${query}`)
-            if(!Array.isArray(res))
+            if(!Array.isArray(res) || suggest.length > 5)
                 return
             const sorted = quickSort(res, (a, b)=> Number(a.post_count) > Number(b.post_count))
             setSuggest(sorted)
