@@ -3,6 +3,7 @@ import {useRouter, useSearchParams} from "next/navigation";
 import {mergeObjectForce} from "@/lib/utils/object";
 import {useState} from "react";
 import {useEffectApi} from "@/hook/useApi";
+import {useLocalStorageList} from "@/hook/useLocalStorageList";
 
 export type BooruImageList = {
     like: boolean,
@@ -17,7 +18,8 @@ export type BooruImageList = {
     query: string,
     maxSensitiveLevel: number,
     showSensitiveLevel: Array<number>,
-    sensitiveFilterType: "hide" | "blur"
+    sensitiveFilterType: "hide" | "blur",
+    lastUpdate: string
 }
 export type BooruImageListOption = {[key in keyof BooruImageList]?: BooruImageList[key]}
 
@@ -34,7 +36,8 @@ export const defaultBooruImageList: BooruImageList = {
     query: "",
     maxSensitiveLevel: 1,
     showSensitiveLevel: [0, 1],
-    sensitiveFilterType: "blur"
+    sensitiveFilterType: "blur",
+    lastUpdate: new Date().toISOString()
 }
 
 export type Fn<T, Y = T> = ((value: T)=> Y)
@@ -54,9 +57,9 @@ export const useBooruImageList = (onLoad?: Fn<BooruImageList, BooruImageListOpti
     }
     const updateSettings = (settings: Fn<BooruImageList, BooruImageListOption> | V<BooruImageListOption>) => {
         if(settings instanceof Function) {
-            return setSettings((v)=> mergeObjectForce(v, settings(v)))
+            return setSettings((v)=> mergeObjectForce(v, {lastUpdate: new Date().toISOString()}, settings(v)))
         }
-        setSettings((v)=> mergeObjectForce(v, settings))
+        setSettings((v)=> mergeObjectForce(v, {lastUpdate: new Date().toISOString()}, settings))
     }
     useEffectApi(async ()=> {
         if(!load && settings && onLoad) {
