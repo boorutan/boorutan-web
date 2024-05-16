@@ -14,6 +14,7 @@ import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruIma
 import {Selector} from "@/components/booruSelector";
 import {getPost} from "@/lib/booruPost";
 import {useAccount} from "@/hook/useAccount";
+import {useBooruList} from "@/hook/useBooruList";
 
 type init = {
     tags: any,
@@ -91,6 +92,7 @@ const BooruImageInfinite = ({init}: {
     const [wait, setWait] = useState<boolean>(false)
     const [isShowHistory, setIsShowHistory] = useState(false)
     const [account, setAccount] = useAccount()
+    const boorusStorage = useBooruList()
     const [settings, setSettings] = useBooruImageList(async (s)=> {
         const basePage = s.page - s.pageBack
         //const posts: Array<any> = await req<any>(`/${s.like ? "like" : "post"}?page=${basePage - 1}&booru=${s.booru}&tags=${s.tags}${s.bypassCache?"&bypasscache=true":""}`)
