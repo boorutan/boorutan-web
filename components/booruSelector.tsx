@@ -49,10 +49,10 @@ const boorus = [
         name: "SafeKonachan",
         id: "safekonachan"
     },
-    {
+    /*{
         name: "Konachan",
         id: "konachan",
-    },
+    },*/
     {
         name: "Yandere",
         id: "yandere"
