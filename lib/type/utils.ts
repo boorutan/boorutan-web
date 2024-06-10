@@ -1,3 +1,8 @@
+export type Option<T> = {[key in keyof T]?: T[key]}
+export type Fn<T, Y = T> = ((value: T)=> Y)
+export type V<T> = T
+export type UpdateFn<T> =  Fn<T, Option<T> | Promise<Option<T>> | void>
+
 /*
 import {Channel, useBroadcast} from "@/hook/useBroadcast";
 import {Fn} from "@/lib/type/utils";
@@ -57,3 +62,5 @@ export const useWindowManager = () => {
         windows = clearWindow(windows)
     }, 100)
     return windowsState
+}
+ */
