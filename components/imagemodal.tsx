@@ -163,7 +163,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                                 display: "flex",
                                 gap: 4
                             }}>
-                                {windows.map((w)=> <p onClick={()=> {
+                                {windows.map((w)=> <p key={w.id} onClick={()=> {
                                     manager({
                                         type: OperationType.appendTag,
                                         data: tag,
