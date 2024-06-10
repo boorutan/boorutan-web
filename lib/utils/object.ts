@@ -2,9 +2,16 @@ export const mergeObject = <T extends  Object | undefined = any>(...objects: Arr
     return objects.filter((obj) => typeof obj == "object" && !!obj).reduce((acc: any, obj: any)=> {
         Object.keys(obj as Object).map((k)=> {
             if(
-                Object.keys(acc).includes(k)
-                && ![null, undefined].includes(acc[k])
-                && !obj[k]
+                (
+                    Object.keys(acc).includes(k)
+                        && ![null, undefined].includes(acc[k])
+                        && !obj[k]
+                )
+                ||
+                (
+                    Array.isArray(acc[k])
+                        && acc[k].length
+                )
             ) return
             acc[k] = obj[k]
         })
