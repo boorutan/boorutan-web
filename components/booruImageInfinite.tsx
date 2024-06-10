@@ -15,6 +15,8 @@ import {Selector} from "@/components/booruSelector";
 import {getPost} from "@/lib/booruPost";
 import {useAccount} from "@/hook/useAccount";
 import {useBooruList} from "@/hook/useBooruList";
+import {useBooruManager} from "@/hook/useBooruManager";
+import {useWindowManager} from "@/hook/useWindowManager";
 
 type init = {
     tags: any,
