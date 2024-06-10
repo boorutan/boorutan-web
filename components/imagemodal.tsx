@@ -1,11 +1,14 @@
 "use client"
 import {useRouter, useSearchParams} from "next/navigation"
 import {useCallback, useState} from "react"
-import BooruImage, {BooruImageFromPost} from "@/components/booruImage";
-import {getDescription, getOriginalUrl, getTitle} from "@/lib/booru";
+import {BooruImageFromPost} from "@/components/booruImage";
+import {getDescription, getTitle} from "@/lib/booru";
 import {req} from "@/lib/fetch";
 import {useBooruImageList} from "@/hook/useBooruImageList";
 import {useEffectApi} from "@/hook/useApi";
+import {useWindowManager} from "@/hook/useWindowManager";
+import {OperationType, useBooruManager} from "@/hook/useBooruManager";
+import {replaceXwithY} from "@/lib/utils/string";
 
 const SelectorButton = ({ children, active, onClick, color }:{
     children: any,
@@ -63,6 +66,10 @@ const ImageModal = ({post, category, notModal, booru}:{
     booru: string,
     notModal?: boolean,
 }) => {
+    const windows = useWindowManager({
+        includeSelf: true
+    })
+    const manager = useBooruManager()
     const [settings, setSettings] = useBooruImageList(()=>{}, {
         replaceId: false
     })
@@ -121,34 +128,55 @@ const ImageModal = ({post, category, notModal, booru}:{
                     borderRadius: 100,
                     flexWrap: "wrap",
                 }}>
-                    {Object.keys(category).map((c, i) => <p onClick={()=> {
-                        console.log(category)
+                    {Object.keys(category).map((c, i) => {
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
+                        const [active, setActive] = useState(false)
                         const tag = {
                             name: c,
                             category: category[c],
                             post_count: "0"
                         }
-                        function replaceXwithY(str: string, X: string, Y: string) {
-                            let regex = new RegExp(`(^|\\s)${X}(\\s|$)`, 'g');
-                            return str.replace(regex, Y);
-                        }
-                        setSettings((s)=> ({
-                            tags: `${c} `.concat(replaceXwithY(s.tags, c, "")).trim(),
-                            tagsRaw: [tag].concat((s.tagsRaw || []).filter((t)=> t.name != c)),
-                            posts: [],
-                            page: 2,
-                            pageBack: 0,
-                            postsBack: []
-                        }))
-                        router.push(`/?id=${query.get("id")}`)
-                        const interval = setInterval(()=> {
-                            location.reload()
-                            clearInterval(interval)
-                        }, 100)
-                        //router.push(`/?id=${query.get("id")}`)
-                        //router.replace(`/?id=${query.get("id")}`)
-
-                    }} style={{color: color[category[c]], margin: 0, cursor: "pointer"}} key={i}>{translate[c] || c}</p>)}
+                        return <div key={i} style={{
+                            display: "flex",
+                            gap: 8
+                        }}>
+                            <p onClick={()=> {
+                                if(windows.length > 0) {
+                                    setActive((a)=> !a)
+                                    return
+                                }
+                                setSettings((s)=> ({
+                                    tags: `${c} `.concat(replaceXwithY(s.tags, c, "")).trim(),
+                                    tagsRaw: [tag].concat((s.tagsRaw || []).filter((t)=> t.name != c)),
+                                    posts: [],
+                                    page: 2,
+                                    pageBack: 0,
+                                    postsBack: []
+                                }))
+                                router.push(`/?id=${query.get("id")}`)
+                                const interval = setInterval(()=> {
+                                    location.reload()
+                                    clearInterval(interval)
+                                }, 100)
+                            }} style={{color: color[category[c]], margin: 0, cursor: "pointer"}}>{translate[c] || c}</p>
+                            {active && <div style={{
+                                display: "flex",
+                                gap: 4
+                            }}>
+                                {windows.map((w)=> <p onClick={()=> {
+                                    manager({
+                                        type: OperationType.appendTag,
+                                        data: tag,
+                                        target: w.id
+                                    })
+                                }} style={{
+                                    color: "#009688",
+                                    margin: 0,
+                                    cursor: "pointer"
+                                }}>{w.id}</p>)}
+                            </div>}
+                        </div>
+                    })}
                 </div>
             </div>
             <BooruImageFromPost  mock style={{
@@ -176,7 +204,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     cursor: "pointer"
                 }}>{getDescription(post, category)}</p>
             </div>
-            {/*<div style={{
+            <div style={{
                 position: "absolute",
                 bottom: 16,
                 right: 32,
@@ -191,7 +219,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                     })
                     setLiked(true)
                 }}>Like</p>
-            </div>*/}
+            </div>
         </div>
     </div>
 }

@@ -128,6 +128,12 @@ const BooruImageInfinite = ({init}: {
     })
     const {like, tags, booru, posts, page, bypassCache, pageBack, postsBack} = settings || defaultBooruImageList
     const ref = useRef<any>(null)
+
+    const manager = useBooruManager({
+        setSettings
+    })
+    const wnidows = useWindowManager()
+
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
