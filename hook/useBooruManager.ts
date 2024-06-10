@@ -1,7 +1,6 @@
 import {Channel, useBroadcast} from "@/hook/useBroadcast";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Router} from "next/router";
-import {AppRouterInstance} from "next/dist/shared/lib/app-router-context";
 import {Fn, Option} from "@/lib/type/utils";
 import {BooruImageList, BooruImageListOption} from "@/hook/useBooruImageList";
 import {replaceXwithY} from "@/lib/utils/string";
@@ -18,7 +17,7 @@ type BooruManagerChannelMessage = {
 }
 
 export const execute = (op: BooruManagerChannelMessage, option: {
-    router: AppRouterInstance,
+    router: any,
     setSettings?: (s: BooruImageListOption | Fn<BooruImageList, BooruImageListOption>) => void
 }) => {
     const id = op.target
