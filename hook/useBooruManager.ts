@@ -26,8 +26,13 @@ export const execute = (op: BooruManagerChannelMessage, option: {
     }
     if(op.type == OperationType.appendTag) {
         option.setSettings && option.setSettings((s)=> ({
-            tags: `${op.data.name} `.concat(replaceXwithY(s.tags, op.data.name, "")).trim(),
-            tagsRaw: [op.data].concat((s.tagsRaw || []).filter((t)=> t.name != op.data.name)),
+            tags: `${op.data.name} `.concat(replaceXwithY(s.tagsRaw?.reduce((acc, v)=> {
+                    if(op.data.category == "1" && v.category == "1") {
+                        return replaceXwithY(acc, v.name, "")
+                    }
+                    return acc
+                }, s.tags) || "", op.data.name, "")),
+            tagsRaw: [op.data].concat((s.tagsRaw?.filter((v)=> op.data.category != "1" || v.category != "1") || []).filter((t)=> t.name != op.data.name)),
             posts: [],
             page: 2,
             pageBack: 0,
