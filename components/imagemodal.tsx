@@ -141,7 +141,7 @@ const ImageModal = ({post, category, notModal, booru}:{
                             gap: 8
                         }}>
                             <p onClick={()=> {
-                                if(windows.length > 0) {
+                                if(windows.length > 1) {
                                     setActive((a)=> !a)
                                     return
                                 }
