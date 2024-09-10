@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import ImageLines from './imagelines';
 import { req } from '@/lib/fetch';
-import { getSampleUrl } from '@/lib/booru';
+import {getSampleUrl, isNeedBlur} from '@/lib/booru';
 import useScrollPosition from '@/hook/useScrollPosition';
 import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
@@ -223,7 +223,7 @@ const BooruImageInfinite = ({init}: {
             }}
             initialLoad={false}
         >
-            <ImageLines account={account} showSensitiveLevel={settings?.showSensitiveLevel} booru={booru || "danbooru"} posts={posts} line_length={3} />
+            <ImageLines account={account} showSensitiveLevel={account?.showSensitiveLevel} booru={booru || "danbooru"} posts={settings?.like ? posts.filter((p)=> !isNeedBlur(settings?.showSensitiveLevel || [], p)) : posts} line_length={3} />
         </InfiniteScroll>
     </div>
 }
