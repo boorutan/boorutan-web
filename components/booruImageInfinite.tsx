@@ -223,7 +223,7 @@ const BooruImageInfinite = ({init}: {
             }}
             initialLoad={false}
         >
-            <ImageLines account={account} showSensitiveLevel={account?.showSensitiveLevel} booru={booru || "danbooru"} posts={settings?.like ? posts.filter((p)=> !isNeedBlur(settings?.showSensitiveLevel || [], p)) : posts} line_length={3} />
+            <ImageLines account={account} showSensitiveLevel={settings?.showSensitiveLevel} booru={booru || "danbooru"} posts={settings?.like ? posts.filter((p)=> !isNeedBlur(settings?.showSensitiveLevel || [], p)) : posts} line_length={3} />
         </InfiniteScroll>
     </div>
 }
