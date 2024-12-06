@@ -10,13 +10,14 @@ import useScrollDirection from '@/hook/useScrollDirection';
 import {useRouter} from "next/navigation";
 import {useEffectApi} from "@/hook/useApi";
 import {quickSort} from "@/lib/sort";
-import {BooruImageList, BooruImageListOption, defaultBooruImageList, useBooruImageList} from "@/hook/useBooruImageList";
+import {BooruImageList, BooruImageListOption, defaultBooruImageList, Fn, useBooruImageList} from "@/hook/useBooruImageList";
 import {Selector} from "@/components/booruSelector";
 import {getPost} from "@/lib/booruPost";
 import {useAccount} from "@/hook/useAccount";
 import {useBooruList} from "@/hook/useBooruList";
 import {useBooruManager} from "@/hook/useBooruManager";
 import {useWindowManager} from "@/hook/useWindowManager";
+import { BooruWindowManager } from './booruwindowmanager';
 
 type init = {
     tags: any,
@@ -131,11 +132,6 @@ const BooruImageInfinite = ({init}: {
     const {like, tags, booru, posts, page, bypassCache, pageBack, postsBack} = settings || defaultBooruImageList
     const ref = useRef<any>(null)
 
-    const manager = useBooruManager({
-        setSettings
-    })
-    const wnidows = useWindowManager()
-
     useEffect(()=> {
         const interval = setInterval(()=> {
             setWait(false)
@@ -143,6 +139,7 @@ const BooruImageInfinite = ({init}: {
         return ()=> clearInterval(interval)
     },[])
     return <div>
+        <BooruWindowManager setSettings={setSettings} />
         {isShowHistory && <div style={{
             display: "flex",
             flexDirection: "column-reverse",
