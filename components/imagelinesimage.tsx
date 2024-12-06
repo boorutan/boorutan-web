@@ -3,7 +3,7 @@ import {BooruImageFromPost} from "@/components/booruImage";
 import Link from "next/link";
 import {useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
-import {useRerender} from "@/hook/useRerender";
+import {useRerender, useRerenderIf} from "@/hook/useRerender";
 import {req} from "@/lib/fetch";
 import {isNeedBlur} from "@/lib/booru";
 import {useBooruImageList} from "@/hook/useBooruImageList";
@@ -21,10 +21,10 @@ export const ImagelinesImage = ({post, booru, showSensitiveLevel, account}:{
     showSensitiveLevel?: Array<number>,
     account: Account | null
 }) => {
-    const update = useRerender()
     const router = useRouter()
     const [isMouseDown, setIsMouseDown] = useState(false)
     const [isMouseHover, setIsMouseHover] = useState(false)
+    const update = useRerenderIf(isMouseHover)
     const [progress, setProgress] = useState(0)
     const [[mouseX, mouseY], setMousePosition] = useState<[number, number]>([0, 0])
     const [like, setLike] = useState(true)
